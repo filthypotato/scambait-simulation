@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/themes/basic/template.css">
+    <title>Transaction Details</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+      #details-tabs .tab-btn { margin-right: 4px; }
+      #details-tabs .tab-btn.active { background-color: var(--primary-bg-color); color: #fff; border-color: var(--primary-bg-color); }
+      #detailscontainer { padding: 1.5em; background-color: #f5f5f5; border-radius: 8px; margin-bottom: 1em; }
+      #detailscontainer h2 { margin: 0; }
+      #detailscontainer .balance-label { font-size: .85em; color: #555; }
+      .txn-table th { background-color: var(--secondary-bg-color); color: #fff; }
+      .section-label { font-size: .75em; color: #888; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0 2px; }
+      #search-row { margin-bottom: 1em; }
+      #search-row input { max-width: 300px; display: inline-block; }
+    </style>
+  </head>
+  <body>
+
+    <div class="preheader">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <nav><ul><li>Products</li><li>Services</li><li>Help</li></ul></nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h2 style="margin-top:8px;">
+              <span id="logo" class="oi" data-glyph="flag"></span>
+              South Federal Holdings of Illinois
+            </h2>
+            <div class="header-menu">
+              <nav>
+                <ul class="nav mx-auto">
+                  <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#" onclick="triggerInactive()">Contact</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="menu">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <nav>
+              <ul class="nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+                <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="triggerInactive()">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="padding-top:1.5em;" id="stuff">
+
+      <!-- Account selector tabs -->
+      <div id="details-tabs" style="margin-bottom:1em;">
+        <button class="btn btn-sm tab-btn active" data-account="XXXX3198" data-type="Checking">
+          Premium Checking (XXXX3198)
+        </button>
+        <button class="btn btn-sm tab-btn btn-outline-secondary" data-account="XXXX1329" data-type="Savings">
+          Joint Savings (XXXX1329)
+        </button>
+      </div>
+
+      <!-- Account summary banner -->
+      <div id="detailscontainer">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="balance-label">Current Account</div>
+            <h2 id="acct-name">Premium Checking &mdash; XXXX3198</h2>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="balance-label">Available Balance</div>
+            <h2 id="acct-balance">$15,123.21</h2>
+          </div>
+          <div class="col-md-3 text-right">
+            <a href="/account" class="btn btn-sm btn-outline-secondary">&#8592; Back to Accounts</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search / filter row -->
+      <div id="search-row">
+        <input type="text" id="txn-search" class="form-control" placeholder="Search transactions..." />
+      </div>
+
+      <!-- Transactions table -->
+      <table class="table table-striped txn-table" id="txn-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th style="text-align:right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody id="txn-body">
+          <!-- populated by JS -->
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="content footer">
+      <div class="container">
+        <p>Member FDIC: No. Rates and investment products are not insured.</p>
+        <p>&copy; Copyright 2024 GGNOREE LLP, LLC, UDP.</p>
+      </div>
+    </div>
+
+    <div id="inactivityPopup">
+      <div class="iseriouslydontcare">
+        <h2>For Your Safety</h2>
+        <p>You have been safely logged out due to inactivity.</p>
+        <p>To return to the login page <a href="/">click here</a>.</p>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>
+      var accounts = {
+        'XXXX3198': {
+          name: 'Premium Checking',
+          balance: '$15,123.21',
+          transactions: [
+            { date:'02/11', desc:'PAYPAL INST XFER',               type:'Debit',           amount:-227.09 },
+            { date:'02/11', desc:'Direct Deposit',                  type:'Credit',          amount: 846.33 },
+            { date:'02/11', desc:'AOL',                             type:'Debit',           amount: -46.17 },
+            { date:'02/10', desc:'Interest',                        type:'Credit',          amount: 151.89 },
+            { date:'02/08', desc:'Spotify',                         type:'Debit',           amount:-172.80 },
+            { date:'02/07', desc:'State Farm Home & Auto',          type:'Debit',           amount:-235.35 },
+            { date:'02/04', desc:'Starbucks US*7KCR6M31L',          type:'Debit',           amount: -28.65 },
+            { date:'02/04', desc:'Petsmart US*DT6WSAGONX2I',        type:'Debit',           amount: -72.34 },
+            { date:'02/01', desc:'Cash Deposit',                    type:'Credit',          amount:  83.54 },
+            { date:'02/01', desc:'Best Buy US*5T8OULXGE',           type:'Debit',           amount: -55.62 },
+            { date:'01/31', desc:'Direct Deposit',                  type:'Credit',          amount: 134.88 },
+            { date:'01/29', desc:'****5782',                        type:'Balance Transfer', amount:   8.39 },
+            { date:'01/27', desc:'Verizon Wireless',                type:'Debit',           amount:-145.05 },
+            { date:'01/25', desc:'Spotify',                         type:'Debit',           amount:-282.65 },
+            { date:'01/24', desc:'PG&E',                            type:'Debit',           amount:-106.35 },
+            { date:'01/24', desc:'Interest',                        type:'Credit',          amount: 535.78 },
+            { date:'01/20', desc:'Sunoco US*XQ7ULN92FO0',           type:'Debit',           amount:-217.15 },
+            { date:'01/20', desc:'****4318',                        type:'Balance Transfer', amount: 164.99 },
+            { date:'01/18', desc:'Direct Deposit',                  type:'Credit',          amount: 787.16 },
+            { date:'01/18', desc:'American Airlines US*BETG105DC',  type:'Debit',           amount:-125.48 },
+            { date:'01/18', desc:'AMZN Mktp US*J2AZU',             type:'Debit',           amount: -73.30 },
+            { date:'01/17', desc:'Cash Withdrawal',                 type:'Debit',           amount:-223.04 },
+            { date:'01/17', desc:'****8133',                        type:'Balance Transfer', amount: 999.32 },
+            { date:'01/16', desc:'Interest',                        type:'Credit',          amount: 861.87 },
+            { date:'01/16', desc:'Hulu',                            type:'Debit',           amount:-271.71 },
+            { date:'01/15', desc:'Interest',                        type:'Credit',          amount: 203.11 },
+            { date:'01/14', desc:'Sunoco US*W95Q7TUJZIS',           type:'Debit',           amount: -77.63 },
+            { date:'01/14', desc:'Kroger US*ZPLDEKA5TX',            type:'Debit',           amount: -37.56 },
+            { date:'01/13', desc:'Interest',                        type:'Credit',          amount: 489.81 }
+          ]
+        },
+        'XXXX1329': {
+          name: 'Joint Savings',
+          balance: '$59,141.93',
+          transactions: [
+            { date:'02/02', desc:'Direct Deposit',   type:'Credit',          amount: 182.24 },
+            { date:'01/30', desc:'Direct Deposit',   type:'Credit',          amount: 559.54 },
+            { date:'01/27', desc:'Interest',         type:'Credit',          amount: 668.57 },
+            { date:'01/24', desc:'Interest',         type:'Credit',          amount: 945.14 },
+            { date:'01/22', desc:'Direct Deposit',   type:'Credit',          amount: 585.55 },
+            { date:'01/20', desc:'Cash Deposit',     type:'Credit',          amount: 916.41 },
+            { date:'01/17', desc:'Direct Deposit',   type:'Credit',          amount: 315.06 },
+            { date:'01/17', desc:'****1510',         type:'Balance Transfer', amount: 847.98 }
+          ]
+        }
+      };
+
+      var currentAccount = 'XXXX3198';
+
+      // Check URL for ?n= param
+      var params = new URLSearchParams(window.location.search);
+      var n = params.get('n');
+      if (n && accounts['XXXX' + n]) {
+        currentAccount = 'XXXX' + n;
+      }
+
+      function fmt(amount) {
+        var sign = amount < 0 ? '-' : '+';
+        var abs = Math.abs(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return sign + ' $' + abs;
+      }
+
+      function renderTransactions(acctKey, filter) {
+        filter = (filter || '').toLowerCase();
+        var txns = accounts[acctKey].transactions;
+        var $tbody = $('#txn-body');
+        $tbody.empty();
+        txns.forEach(function (t) {
+          if (filter && t.desc.toLowerCase().indexOf(filter) === -1 && t.type.toLowerCase().indexOf(filter) === -1) return;
+          var isCredit = t.amount > 0;
+          var colorStyle = isCredit ? 'color:#2a7a2a;font-weight:600;' : 'color:#c0392b;font-weight:600;';
+          var $tr = $('<tr>');
+          $tr.append($('<td>').text(t.date));
+          $tr.append($('<td>').text(t.desc));
+          $tr.append($('<td>').text(t.type));
+          $tr.append($('<td style="text-align:right;">').html('<span style="' + colorStyle + '">' + fmt(t.amount) + '</span>'));
+          $tbody.append($tr);
+        });
+        if ($tbody.children().length === 0) {
+          $tbody.append('<tr><td colspan="4" style="text-align:center;color:#999;">No transactions found.</td></tr>');
+        }
+      }
+
+      function loadAccount(acctKey) {
+        currentAccount = acctKey;
+        var info = accounts[acctKey];
+        $('#acct-name').text(info.name + ' \u2014 ' + acctKey);
+        $('#acct-balance').text(info.balance);
+        $('#txn-search').val('');
+        renderTransactions(acctKey, '');
+
+        // Update tabs
+        $('.tab-btn').each(function () {
+          if ($(this).data('account') === acctKey) {
+            $(this).addClass('active').removeClass('btn-outline-secondary');
+          } else {
+            $(this).removeClass('active').addClass('btn-outline-secondary');
+          }
+        });
+      }
+
+      $(document).ready(function () {
+        loadAccount(currentAccount);
+
+        $('.tab-btn').on('click', function () {
+          loadAccount($(this).data('account'));
+        });
+
+        $('#txn-search').on('input', function () {
+          renderTransactions(currentAccount, $(this).val());
+        });
+
+        // Inactivity
+        var inactivityTimer;
+        function resetTimer() {
+          clearTimeout(inactivityTimer);
+          inactivityTimer = setTimeout(function () {
+            $('#inactivityPopup').fadeIn();
+          }, 15 * 60 * 1000);
+        }
+        $(document).on('mousemove keypress click', resetTimer);
+        resetTimer();
+      });
+
+      window.triggerInactive = function () {
+        $('#inactivityPopup').fadeIn();
+      };
+    </script>
+  </body>
+</html>

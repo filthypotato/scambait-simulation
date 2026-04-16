@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/themes/basic/template.css">
+    <title>Inbox | South Federal</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+      #inbox-wrap { max-width: 820px; margin: 2em auto; }
+      .msg-list { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; }
+      .msg-row {
+        display: flex; align-items: center; padding: .9em 1.2em;
+        border-bottom: 1px solid #eee; cursor: pointer; background: #fff;
+        transition: background .15s;
+      }
+      .msg-row:last-child { border-bottom: none; }
+      .msg-row:hover { background: #f0f7e6; }
+      .msg-row.unread { background: #f5fff0; font-weight: 600; }
+      .msg-row.unread .msg-subject::before {
+        content: ''; display: inline-block; width: 8px; height: 8px;
+        border-radius: 50%; background: var(--primary-bg-color);
+        margin-right: 8px; vertical-align: middle;
+      }
+      .msg-icon { font-size: 1.3em; margin-right: 1em; color: var(--secondary-bg-color); min-width: 24px; text-align: center; }
+      .msg-meta { flex: 1; }
+      .msg-subject { font-size: .95em; }
+      .msg-from { font-size: .78em; color: #888; font-weight: 400; }
+      .msg-date { font-size: .78em; color: #999; white-space: nowrap; margin-left: 1em; }
+      #msg-detail { display: none; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 2em; }
+      #msg-detail h5 { font-size: 1.1em; border-bottom: 2px solid var(--primary-bg-color); padding-bottom: .5em; }
+      .msg-header-row { display: flex; justify-content: space-between; margin-bottom: 1.2em; font-size: .85em; color: #666; }
+      #msg-body { line-height: 1.7; }
+      #back-to-inbox { margin-bottom: 1.2em; }
+      .inbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1em; }
+      .unread-badge { background: var(--primary-bg-color); color: #fff; border-radius: 12px; padding: 2px 10px; font-size: .8em; }
+    </style>
+  </head>
+  <body>
+    <div class="preheader"><div class="container"><nav><ul><li>Products</li><li>Services</li><li>Help</li></ul></nav></div></div>
+    <header>
+      <div class="container"><div class="row"><div class="col-md-12">
+        <h2 style="margin-top:8px;"><span id="logo" class="oi" data-glyph="flag"></span>South Federal Holdings of Illinois</h2>
+        <div class="header-menu">
+          <nav><ul class="nav mx-auto">
+            <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+            <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          </ul></nav>
+        </div>
+      </div></div></div>
+    </header>
+    <div class="menu">
+      <div class="container"><div class="row"><div class="col-md-12">
+        <nav><ul class="nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        </ul></nav>
+      </div></div></div>
+    </div>
+
+    <div id="inbox-wrap">
+
+      <!-- Message list -->
+      <div id="list-view">
+        <div class="inbox-header">
+          <h4 style="margin:0;">Inbox</h4>
+          <span class="unread-badge" id="unread-count">5 unread</span>
+        </div>
+        <div class="msg-list" id="msg-list"></div>
+      </div>
+
+      <!-- Message detail -->
+      <div id="msg-detail">
+        <button class="btn btn-outline-secondary btn-sm" id="back-to-inbox">&#8592; Back to Inbox</button>
+        <h5 id="detail-subject"></h5>
+        <div class="msg-header-row">
+          <span><strong>From:</strong> <span id="detail-from"></span></span>
+          <span id="detail-date"></span>
+        </div>
+        <div id="msg-body"></div>
+      </div>
+
+    </div>
+
+    <div class="content footer" style="margin-top:3em;">
+      <div class="container">
+        <p>Member FDIC: No.</p>
+        <p>&copy; Copyright 2024 GGNOREE LLP, LLC, UDP.</p>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script>
+      var messages = [
+        {
+          id: 1, unread: true,
+          from: 'South Federal Security Team',
+          subject: 'Important: New Device Login Detected',
+          date: 'Feb 13, 2020',
+          icon: '&#9888;',
+          body: `<p>Dear Valued Customer,</p>
+<p>We noticed a login to your South Federal online banking account from a new device or location:</p>
+<ul>
+  <li><strong>Date &amp; Time:</strong> February 13, 2020 at 12:04 PM CST</li>
+  <li><strong>Device:</strong> Windows PC — Chrome Browser</li>
+  <li><strong>Location:</strong> Chicago, IL</li>
+</ul>
+<p>If this was you, no action is needed. If you did <strong>not</strong> authorize this login, please contact us immediately at <strong>1-800-555-0199</strong> or <a href="/contact">submit a support request</a>.</p>
+<p>Thank you for banking with South Federal Holdings of Illinois.</p>
+<p>— South Federal Security Team</p>`
+        },
+        {
+          id: 2, unread: true,
+          from: 'South Federal eStatements',
+          subject: 'Your January 2020 Statement is Ready',
+          date: 'Feb 01, 2020',
+          icon: '&#128196;',
+          body: `<p>Dear Valued Customer,</p>
+<p>Your account statement for <strong>January 2020</strong> is now available in your online banking portal.</p>
+<table class="table table-sm" style="max-width:400px;margin-top:1em;">
+  <tr><td>Premium Checking (XXXX3198)</td><td><strong>$15,123.21</strong></td></tr>
+  <tr><td>Joint Savings (XXXX1329)</td><td><strong>$59,141.93</strong></td></tr>
+  <tr><td>Money Market (XXXX6993)</td><td><strong>$507,277.36</strong></td></tr>
+</table>
+<p>You can view and download your full statement by visiting <a href="/account/details">Account Details</a>.</p>
+<p>Going paperless saves trees and keeps your information secure. <a href="#">Learn more about paperless statements.</a></p>
+<p>— South Federal eStatements</p>`
+        },
+        {
+          id: 3, unread: true,
+          from: 'South Federal Rewards',
+          subject: 'You have 2,450 Reward Points Expiring Soon',
+          date: 'Jan 28, 2020',
+          icon: '&#11088;',
+          body: `<p>Dear Valued Customer,</p>
+<p>Just a heads up — you have <strong>2,450 reward points</strong> that will expire on <strong>March 31, 2020</strong>.</p>
+<p>Here's what you can redeem them for:</p>
+<ul>
+  <li>&#128181; Statement credit ($24.50 value)</li>
+  <li>&#9992; Travel miles (2,450 miles)</li>
+  <li>&#127873; Gift cards starting at 1,000 points</li>
+</ul>
+<p>Don't let your points go to waste! <a href="#">Redeem now</a> before they expire.</p>
+<p>— South Federal Rewards Program</p>`
+        },
+        {
+          id: 4, unread: true,
+          from: 'South Federal Alerts',
+          subject: 'Low Balance Alert: Premium Checking',
+          date: 'Jan 22, 2020',
+          icon: '&#128276;',
+          body: `<p>Dear Valued Customer,</p>
+<p>This is an automated alert for your <strong>Premium Checking account (XXXX3198)</strong>.</p>
+<p>Your account balance dropped below your alert threshold of <strong>$16,000.00</strong>.</p>
+<ul>
+  <li><strong>Current Balance:</strong> $15,123.21</li>
+  <li><strong>Alert Threshold:</strong> $16,000.00</li>
+  <li><strong>Date:</strong> January 22, 2020</li>
+</ul>
+<p>You can transfer funds from your savings account to restore your balance. <a href="/transfer">Make a transfer now</a>.</p>
+<p>To update your alert settings, visit <a href="#">Edit or Add Alerts</a>.</p>
+<p>— South Federal Account Alerts</p>`
+        },
+        {
+          id: 5, unread: true,
+          from: 'South Federal Holdings of Illinois',
+          subject: 'Welcome to Online Banking!',
+          date: 'Jan 01, 2020',
+          icon: '&#127968;',
+          body: `<p>Dear Valued Customer,</p>
+<p>Welcome to <strong>South Federal Holdings of Illinois</strong> Online Banking. We're thrilled to have you!</p>
+<p>With your online banking account you can:</p>
+<ul>
+  <li>&#10003; Check balances and recent transactions 24/7</li>
+  <li>&#10003; Transfer funds between your accounts instantly</li>
+  <li>&#10003; Pay bills and external accounts</li>
+  <li>&#10003; Set up account alerts and notifications</li>
+  <li>&#10003; Go paperless with eStatements</li>
+  <li>&#10003; Download the South Federal mobile app</li>
+</ul>
+<p>If you have any questions, our support team is available 24/7 at <strong>1-800-555-0199</strong> or via our <a href="/contact">contact form</a>.</p>
+<p>Thank you for choosing South Federal Holdings of Illinois.</p>
+<p>— The South Federal Team</p>`
+        },
+        {
+          id: 6, unread: false,
+          from: 'South Federal eStatements',
+          subject: 'Your December 2019 Statement is Ready',
+          date: 'Jan 01, 2020',
+          icon: '&#128196;',
+          body: `<p>Dear Valued Customer,</p>
+<p>Your account statement for <strong>December 2019</strong> is now available for download.</p>
+<p>Log in to view your full statement at any time from the Account Details page.</p>
+<p>— South Federal eStatements</p>`
+        },
+        {
+          id: 7, unread: false,
+          from: 'South Federal Holdings of Illinois',
+          subject: 'Happy Holidays from South Federal',
+          date: 'Dec 24, 2019',
+          icon: '&#127876;',
+          body: `<p>Dear Valued Customer,</p>
+<p>From all of us at South Federal Holdings of Illinois, we wish you a wonderful holiday season and a prosperous New Year.</p>
+<p>Our branches will be closed December 25 and January 1. Online banking remains available 24/7.</p>
+<p>— South Federal Holdings of Illinois</p>`
+        }
+      ];
+
+      var readSet = {};
+
+      function countUnread() {
+        return messages.filter(function(m) { return m.unread && !readSet[m.id]; }).length;
+      }
+
+      function updateBadge() {
+        var n = countUnread();
+        $('#unread-count').text(n + ' unread');
+      }
+
+      function renderList() {
+        var $list = $('#msg-list').empty();
+        messages.forEach(function(m) {
+          var isRead = !m.unread || readSet[m.id];
+          var $row = $('<div class="msg-row ' + (isRead ? '' : 'unread') + '" data-id="' + m.id + '">');
+          $row.append('<span class="msg-icon">' + m.icon + '</span>');
+          var $meta = $('<div class="msg-meta">');
+          $meta.append('<div class="msg-subject">' + m.subject + '</div>');
+          $meta.append('<div class="msg-from">' + m.from + '</div>');
+          $row.append($meta);
+          $row.append('<span class="msg-date">' + m.date + '</span>');
+          $list.append($row);
+        });
+        updateBadge();
+      }
+
+      $(document).on('click', '.msg-row', function() {
+        var id = parseInt($(this).data('id'));
+        var msg = messages.find(function(m) { return m.id === id; });
+        if (!msg) return;
+
+        readSet[id] = true;
+        $(this).removeClass('unread');
+        updateBadge();
+
+        $('#detail-subject').text(msg.subject);
+        $('#detail-from').text(msg.from);
+        $('#detail-date').text(msg.date);
+        $('#msg-body').html(msg.body);
+
+        $('#list-view').hide();
+        $('#msg-detail').show();
+      });
+
+      $('#back-to-inbox').on('click', function() {
+        $('#msg-detail').hide();
+        $('#list-view').show();
+        renderList();
+      });
+
+      renderList();
+    </script>
+  </body>
+</html>

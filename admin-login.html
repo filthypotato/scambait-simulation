@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin Access</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #1a1a2e; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .box {
+      background: #16213e; border: 1px solid #0f3460;
+      border-radius: 10px; padding: 2.5em 2em; width: 100%; max-width: 380px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+    }
+    .box h2 { color: #e94560; margin: 0 0 .3em; font-size: 1.2em; text-align: center; }
+    .box p  { color: #888; font-size: .82em; text-align: center; margin-bottom: 1.5em; }
+    input {
+      width: 100%; padding: .7em 1em; background: #0f3460; border: 1px solid #1a4a8a;
+      border-radius: 6px; color: #fff; font-size: 1em; margin-bottom: 1em;
+      outline: none;
+    }
+    input:focus { border-color: #e94560; }
+    button {
+      width: 100%; padding: .75em; background: #e94560; color: #fff;
+      border: none; border-radius: 6px; font-size: 1em; cursor: pointer;
+      font-weight: 600; letter-spacing: .5px;
+    }
+    button:hover { background: #c73652; }
+    #err { color: #e94560; font-size: .83em; text-align: center; display: none; margin-top: .5em; }
+    .lock { font-size: 2.5em; text-align: center; margin-bottom: .5em; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="lock">&#128274;</div>
+    <h2>Scambait Control Panel</h2>
+    <p>This page is not indexed and not visible to the scammer.</p>
+    <input type="password" id="pw" placeholder="Admin password" autofocus/>
+    <button id="login-btn">Enter</button>
+    <div id="err">Wrong password.</div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    $('#pw').on('keypress', function(e){ if(e.which===13) $('#login-btn').trigger('click'); });
+    $('#login-btn').on('click', function(){
+      var pw = $('#pw').val().trim();
+      if (!pw) return;
+      $.ajax({
+        url: '/admin/login', method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ password: pw }),
+        success: function(d){
+          if (d.success) { window.location.href = '/admin/panel'; }
+          else { $('#err').show(); $('#pw').val('').focus(); }
+        },
+        error: function(){ $('#err').text('Server error.').show(); }
+      });
+    });
+  </script>
+</body>
+</html>

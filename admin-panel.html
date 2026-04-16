@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Scambait Control Panel</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #1a1a2e; min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif; color: #e0e0e0;
+    }
+    header {
+      background: #16213e; border-bottom: 2px solid #e94560;
+      padding: .8em 2em; display: flex; align-items: center; justify-content: space-between;
+    }
+    header h1 { margin: 0; font-size: 1.2em; color: #e94560; }
+    header .logout { color: #888; font-size: .85em; text-decoration: none; }
+    header .logout:hover { color: #e94560; }
+    .container { max-width: 860px; margin: 2em auto; padding: 0 1em; }
+    .subtitle { color: #888; font-size: .88em; margin-bottom: 2em; }
+
+    /* Status bar */
+    #status-bar {
+      background: #0f3460; border-radius: 8px; padding: .75em 1.2em;
+      font-size: .82em; margin-bottom: 2em; display: none;
+      border-left: 4px solid #4caf50;
+    }
+    #status-bar.error { border-left-color: #e94560; }
+
+    /* Trap cards */
+    .trap-grid { display: grid; gap: 1em; }
+    .trap-card {
+      background: #16213e; border: 1px solid #0f3460; border-radius: 10px;
+      padding: 1.2em 1.4em; display: flex; align-items: flex-start; gap: 1.2em;
+      transition: border-color .2s;
+    }
+    .trap-card.active  { border-color: #4caf50; }
+    .trap-card.inactive{ border-color: #e94560; opacity: .7; }
+
+    .trap-info { flex: 1; }
+    .trap-info .trap-label { font-weight: 600; font-size: .97em; margin-bottom: .25em; }
+    .trap-info .trap-desc  { color: #888; font-size: .8em; line-height: 1.5; }
+    .fire-btn {
+      margin-top: .6em; padding: .3em .9em; background: #e94560; color: #fff;
+      border: none; border-radius: 6px; font-size: .78em; cursor: pointer;
+      font-weight: 700; letter-spacing: .3px;
+    }
+    .fire-btn:hover { background: #c73652; }
+    .fire-btn.fired { background: #4caf50; transition: background .3s; }
+
+    /* Toggle switch */
+    .toggle-wrap { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: .3em; }
+    .toggle { position: relative; width: 50px; height: 26px; cursor: pointer; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: #e94560; border-radius: 26px; transition: background .25s;
+    }
+    .toggle-slider:before {
+      content: ''; position: absolute;
+      width: 20px; height: 20px; border-radius: 50%;
+      left: 3px; bottom: 3px; background: #fff;
+      transition: transform .25s;
+    }
+    .toggle input:checked + .toggle-slider { background: #4caf50; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(24px); }
+    .toggle-label { font-size: .7em; color: #888; }
+
+    /* Summary bar */
+    #summary {
+      background: #16213e; border-radius: 8px; padding: 1em 1.4em;
+      margin-bottom: 1.5em; display: flex; gap: 2em; font-size: .85em;
+    }
+    #summary .s-block { text-align: center; }
+    #summary .s-val { font-size: 1.8em; font-weight: 700; }
+    #summary .s-val.on  { color: #4caf50; }
+    #summary .s-val.off { color: #e94560; }
+    #summary .s-lbl { color: #888; font-size: .78em; }
+
+    /* Bulk buttons */
+    .bulk-btns { display: flex; gap: .7em; margin-bottom: 1.5em; }
+    .bulk-btns button {
+      padding: .5em 1.2em; border: none; border-radius: 6px;
+      font-size: .85em; cursor: pointer; font-weight: 600;
+    }
+    #enable-all  { background: #4caf50; color: #fff; }
+    #disable-all { background: #e94560; color: #fff; }
+    #enable-all:hover  { background: #388e3c; }
+    #disable-all:hover { background: #c0392b; }
+
+    /* Password change section */
+    .section-title { color: #e94560; font-size: .8em; text-transform: uppercase;
+      letter-spacing: 1px; margin: 2em 0 .8em; }
+    .pw-change-box {
+      background: #16213e; border: 1px solid #0f3460; border-radius: 10px;
+      padding: 1.2em 1.4em;
+    }
+    .pw-change-box label { color: #888; font-size: .82em; display: block; margin-bottom: .4em; }
+    .pw-change-box input {
+      background: #0f3460; border: 1px solid #1a4a8a; border-radius: 6px;
+      color: #fff; padding: .5em .8em; font-size: .9em; outline: none;
+      margin-right: .6em; width: 220px;
+    }
+    .pw-change-box button {
+      background: #0f3460; color: #e0e0e0; border: 1px solid #1a4a8a;
+      border-radius: 6px; padding: .5em 1em; cursor: pointer; font-size: .85em;
+    }
+    .pw-change-box button:hover { background: #1a4a8a; }
+
+    /* Timing hints */
+    .timing-note {
+      background: #0f3460; border-radius: 6px; padding: .8em 1.2em;
+      font-size: .78em; color: #aaa; margin-bottom: 1.5em; line-height: 1.7;
+    }
+    .timing-note strong { color: #e0e0e0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>&#127918; Scambait Control Panel</h1>
+    <a class="logout" href="/admin/logout">Log out &rsaquo;</a>
+  </header>
+
+  <div class="container">
+    <p class="subtitle">
+      Toggle traps on or off in real time. Changes take effect immediately for the next page load.
+      The scammer never sees this page — it's only accessible at <code>/admin</code>.
+    </p>
+
+    <div id="status-bar"></div>
+
+    <!-- Summary -->
+    <div id="summary">
+      <div class="s-block">
+        <div class="s-val on" id="s-on">—</div>
+        <div class="s-lbl">Traps Active</div>
+      </div>
+      <div class="s-block">
+        <div class="s-val off" id="s-off">—</div>
+        <div class="s-lbl">Traps Disabled</div>
+      </div>
+      <div class="s-block">
+        <div class="s-val" id="s-total" style="color:#888;">—</div>
+        <div class="s-lbl">Total Traps</div>
+      </div>
+    </div>
+
+    <!-- Bulk controls -->
+    <div class="bulk-btns">
+      <button id="enable-all">&#9989; Enable All</button>
+      <button id="disable-all">&#10060; Disable All</button>
+    </div>
+
+    <!-- Timing reference -->
+    <div class="timing-note">
+      <strong>Trap timeline (when all are ON):</strong><br/>
+      T+1.5s &rarr; Device warning bar appears (12s) &nbsp;|&nbsp;
+      T+4s &rarr; Identity Verification (fails 3x) &nbsp;|&nbsp;
+      After ID fails &rarr; Security Question (wrong 2x) &nbsp;|&nbsp;
+      T+90s after SQ &rarr; W-9 Form (TIN wrong 2x) &nbsp;|&nbsp;
+      T+3m after SQ &rarr; Unusual Activity alert &nbsp;|&nbsp;
+      T+30s after "I called" &rarr; Session Reauth (wrong 2x, repeats every 5m) &nbsp;|&nbsp;
+      T+5m &rarr; Suspicious Activity banner ("it's you") &nbsp;|&nbsp;
+      T+3m &rarr; Scammer Tax -$9,999 injects into transactions &nbsp;|&nbsp;
+      Wire attempt 1–2 &rarr; 72-hr hold &nbsp;|&nbsp;
+      Wire attempt 3 &rarr; W-9 re-prompt &nbsp;|&nbsp;
+      Wire attempt 4 &rarr; Fake Windows Update screen &nbsp;|&nbsp;
+      Wire attempt 5 &rarr; "Nice Try Lol" popup &nbsp;|&nbsp;
+      Wire attempt 6 &rarr; FBI Warning page redirect &nbsp;|&nbsp;
+      Transfer (internal) &rarr; 38–60s delay + 2 fake error codes before succeeding &nbsp;|&nbsp;
+      Money Market balance ticks up $1/sec with "Very Aggressive" interest label &nbsp;|&nbsp;
+      Chat widget: professional &rarr; suspicious &rarr; fully aware &rarr; chaos
+    </div>
+
+    <!-- Trap cards -->
+    <div class="trap-grid" id="trap-grid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Change password section -->
+    <div class="section-title">Admin Password</div>
+    <div class="pw-change-box">
+      <label>Note: Password changes only persist until server restart. To make permanent, edit <code>ADMIN_PASSWORD</code> in server.js.</label>
+      <input type="password" id="new-pw" placeholder="New admin password"/>
+      <button id="change-pw-btn">Update</button>
+      <span id="pw-msg" style="font-size:.8em;margin-left:.5em;"></span>
+    </div>
+
+    <div style="height:3em;"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+    var traps = {};
+
+    function showStatus(msg, isError) {
+      $('#status-bar')
+        .text(msg)
+        .removeClass('error')
+        .toggleClass('error', !!isError)
+        .show();
+      setTimeout(function(){ $('#status-bar').fadeOut(400); }, 2500);
+    }
+
+    function updateSummary() {
+      var on = 0, off = 0;
+      Object.keys(traps).forEach(function(k){
+        traps[k].enabled ? on++ : off++;
+      });
+      $('#s-on').text(on);
+      $('#s-off').text(off);
+      $('#s-total').text(on + off);
+    }
+
+    function renderTraps(data) {
+      traps = data;
+      var $grid = $('#trap-grid').empty();
+      var order = [
+        // ── Core Time-Wasters ──
+        'identityVerification','securityQuestion','w9Form','unusualActivity',
+        'sessionReauth','callbackScheduler','deviceCodeModal','wireTransfer','transferDelay',
+        // ── Chaos / Humour ──
+        'aggressiveInterest','scammerTax','suspiciousYou','scamChat','fakeUpdate','niceTryPopup','fbiRedirect',
+        // ── Visual Chaos ──
+        'cursorDrift','disappearingButton','mirrorMode','fontWingdings','slowMotion',
+        'confettiBlock','zoomChaos','pageShake','fadeOut','upsideDown',
+        'balanceRandomizer','buttonSwap','infiniteScroll','clickCounter','invisibleFields',
+        // ── Fake Errors & System Messages ──
+        'voiceRecRequired','queueNumber','biosShutdown','javaUpdateLoop','ispFirewallBlock',
+        'biometricFail','checksumMismatch','hackerTerminal','browserIncompat','govAuditFreeze',
+        'fakeBsod','certExpired','mouseTrail','typingSlowdown','formReset',
+        'validationLoop','fakeDbReindex','withdrawalLimit','ieRequired',
+        // ── Psychological Traps ──
+        'rivalScammer','charityTransfer','policeKnock','wrongNumber','accountFrozen',
+        'irsLien','redemptionPopup','greedyBalance','surveyWall','termsScroll',
+        // ── UI Interaction Traps ──
+        'captchaInfinite','fakeProgress','redirectLoop','addressFail','adOverlay',
+        'fakeFbi','devToolsSpoof','brokenKeys','cursorTeleport','scrollLock',
+        // ── Audio / Notification Traps ──
+        'alertSpam','connectionDropping','inactiveAccountWarn','maintenanceMode','sessionExpireSoon',
+        'paperworkRequired','microDeposits','newPayeeCooling','dailyLimitHit','complianceHold',
+        // ── Premium Chaos ──
+        'balanceZero','matrixMode','invertColors','rickRoll','scammerScore',
+        'cursedCursor','fakeTyping','accountDeleted','interpol','grandmaNotified'
+      ];
+      order.forEach(function(key) {
+        var t = data[key];
+        if (!t) return;
+        var checked = t.enabled ? 'checked' : '';
+        var cardClass = t.enabled ? 'active' : 'inactive';
+
+        var $card = $('<div class="trap-card ' + cardClass + '" data-key="' + key + '">');
+        $card.append(
+          '<div class="trap-info">' +
+          '  <div class="trap-label">' + t.label + '</div>' +
+          '  <div class="trap-desc">' + t.desc + '</div>' +
+          '  <button class="fire-btn" data-key="' + key + '">&#9889; Fire Now</button>' +
+          '</div>' +
+          '<div class="toggle-wrap">' +
+          '  <label class="toggle">' +
+          '    <input type="checkbox" data-key="' + key + '" ' + checked + '/>' +
+          '    <span class="toggle-slider"></span>' +
+          '  </label>' +
+          '  <span class="toggle-label" id="lbl-' + key + '">' + (t.enabled ? 'ON' : 'OFF') + '</span>' +
+          '</div>'
+        );
+        $grid.append($card);
+      });
+
+      updateSummary();
+
+      // Wire toggle events
+      $grid.find('input[type=checkbox]').on('change', function() {
+        var key = $(this).data('key');
+        var enabled = $(this).is(':checked');
+        setTrap(key, enabled);
+      });
+
+      // Wire Fire Now buttons
+      $grid.find('.fire-btn').on('click', function() {
+        var key = $(this).data('key');
+        var $btn = $(this);
+        $.ajax({
+          url: '/api/trap-fire/' + key,
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({}),
+          success: function(d) {
+            if (d.success) {
+              $btn.addClass('fired').text('&#9989; Fired!');
+              setTimeout(function() {
+                $btn.removeClass('fired').html('&#9889; Fire Now');
+              }, 2000);
+              showStatus('⚡ Fired: ' + traps[key].label);
+            }
+          },
+          error: function() { showStatus('Failed to fire trap.', true); }
+        });
+      });
+    }
+
+    function setTrap(key, enabled) {
+      $.ajax({
+        url: '/api/traps/' + key,
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ enabled: enabled }),
+        success: function(d) {
+          if (d.success) {
+            traps[key].enabled = enabled;
+            var $card = $('.trap-card[data-key="' + key + '"]');
+            $card.removeClass('active inactive').addClass(enabled ? 'active' : 'inactive');
+            $('#lbl-' + key).text(enabled ? 'ON' : 'OFF');
+            updateSummary();
+            showStatus((enabled ? '✅ Enabled: ' : '❌ Disabled: ') + traps[key].label);
+          }
+        },
+        error: function() { showStatus('Server error updating trap.', true); }
+      });
+    }
+
+    function loadTraps() {
+      $.getJSON('/api/traps', function(data) {
+        renderTraps(data);
+      }).fail(function() {
+        showStatus('Failed to load traps.', true);
+      });
+    }
+
+    $('#enable-all').on('click', function() {
+      Object.keys(traps).forEach(function(key) {
+        if (!traps[key].enabled) {
+          $('input[data-key="' + key + '"]').prop('checked', true);
+          setTrap(key, true);
+        }
+      });
+    });
+
+    $('#disable-all').on('click', function() {
+      Object.keys(traps).forEach(function(key) {
+        if (traps[key].enabled) {
+          $('input[data-key="' + key + '"]').prop('checked', false);
+          setTrap(key, false);
+        }
+      });
+    });
+
+    $('#change-pw-btn').on('click', function() {
+      var pw = $('#new-pw').val().trim();
+      if (!pw || pw.length < 6) {
+        $('#pw-msg').css('color','#e94560').text('Must be at least 6 characters.');
+        return;
+      }
+      // Note: this updates the in-memory variable on the server side if you add the route
+      $('#pw-msg').css('color','#4caf50').text('To permanently change, edit ADMIN_PASSWORD in server.js and restart.');
+      $('#new-pw').val('');
+    });
+
+    loadTraps();
+  </script>
+</body>
+</html>

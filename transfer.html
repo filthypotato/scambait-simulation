@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/themes/basic/template.css">
+    <title>Pay &amp; Transfer | South Federal</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+      #transfer-wrap { max-width: 620px; margin: 2em auto; }
+      .step-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 2em; }
+      .step-card h4 { border-bottom: 3px solid var(--primary-bg-color); padding-bottom: .5em; margin-bottom: 1.5em; }
+      .form-label { font-weight: 600; font-size: .9em; }
+      .acct-badge { font-size: .8em; color: #888; margin-left: 6px; }
+      #confirm-card { display: none; }
+      #success-card { display: none; }
+      .confirm-row { display: flex; justify-content: space-between; padding: .5em 0; border-bottom: 1px solid #eee; }
+      .confirm-row:last-child { border-bottom: none; }
+      .confirm-label { color: #666; }
+      .confirm-value { font-weight: 600; }
+      #amount { font-size: 1.4em; }
+      .balance-hint { font-size: .8em; color: #888; margin-top: 4px; }
+      #success-card { text-align: center; padding: 3em 2em; }
+      #success-card .check { font-size: 4em; color: var(--primary-bg-color); }
+      .error-msg { color: #c0392b; font-size: .85em; display: none; margin-top: 4px; }
+      #processing-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;
+        flex-direction: column; color: #fff; text-align: center;
+      }
+      #processing-overlay.active { display: flex; }
+      .processing-spinner {
+        width: 64px; height: 64px; border: 6px solid rgba(255,255,255,0.2);
+        border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.5em;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      #processing-status { font-size: .95em; color: #ccc; margin-top: .5em; max-width: 340px; }
+    </style>
+  </head>
+  <body>
+    <div class="preheader"><div class="container"><nav><ul><li>Products</li><li>Services</li><li>Help</li></ul></nav></div></div>
+    <header>
+      <div class="container">
+        <div class="row"><div class="col-md-12">
+          <h2 style="margin-top:8px;"><span id="logo" class="oi" data-glyph="flag"></span>South Federal Holdings of Illinois</h2>
+          <div class="header-menu">
+            <nav><ul class="nav mx-auto">
+              <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+              <li class="nav-item"><a class="nav-link active" href="/transfer">Pay &amp; Transfer</a></li>
+              <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+              <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul></nav>
+          </div>
+        </div></div>
+      </div>
+    </header>
+    <div class="menu">
+      <div class="container"><div class="row"><div class="col-md-12">
+        <nav><ul class="nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/transfer">Pay &amp; Transfer</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        </ul></nav>
+      </div></div></div>
+    </div>
+
+    <div id="transfer-wrap">
+
+      <!-- Step 1: Transfer form -->
+      <div id="form-card" class="step-card">
+        <h4>Transfer Funds</h4>
+
+        <div class="form-group">
+          <label class="form-label">From Account</label>
+          <select class="form-control" id="from-acct">
+            <option value="" disabled selected>Select account...</option>
+          </select>
+          <div class="balance-hint" id="from-hint"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">To Account</label>
+          <select class="form-control" id="to-acct">
+            <option value="" disabled selected>Select account...</option>
+          </select>
+          <div class="balance-hint" id="to-hint"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Amount ($)</label>
+          <input type="number" class="form-control" id="amount" min="0.01" step="0.01" placeholder="0.00" />
+          <div class="error-msg" id="amount-err">Please enter a valid amount.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Memo <span style="font-weight:400;color:#999;">(optional)</span></label>
+          <input type="text" class="form-control" id="memo" placeholder="e.g. Rent, savings goal..." maxlength="60" />
+        </div>
+
+        <button class="btn btn-success btn-block" id="review-btn">Review Transfer</button>
+        <a href="/account" class="btn btn-outline-secondary btn-block" style="margin-top:.5em;">Cancel</a>
+      </div>
+
+      <!-- Step 2: Confirm -->
+      <div id="confirm-card" class="step-card">
+        <h4>Confirm Transfer</h4>
+        <div class="confirm-row"><span class="confirm-label">From</span><span class="confirm-value" id="c-from"></span></div>
+        <div class="confirm-row"><span class="confirm-label">To</span><span class="confirm-value" id="c-to"></span></div>
+        <div class="confirm-row"><span class="confirm-label">Amount</span><span class="confirm-value" id="c-amount"></span></div>
+        <div class="confirm-row" id="c-memo-row"><span class="confirm-label">Memo</span><span class="confirm-value" id="c-memo"></span></div>
+        <div class="confirm-row"><span class="confirm-label">Date</span><span class="confirm-value" id="c-date"></span></div>
+        <br/>
+        <button class="btn btn-success btn-block" id="submit-btn">Confirm &amp; Transfer</button>
+        <button class="btn btn-outline-secondary btn-block" id="back-btn" style="margin-top:.5em;">Go Back</button>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="success-card" class="step-card">
+        <div class="check">&#10003;</div>
+        <h3>Transfer Complete!</h3>
+        <p id="success-msg"></p>
+        <p style="color:#888;font-size:.85em;">A confirmation has been sent to your registered email address.</p>
+        <a href="/account" class="btn btn-success" style="margin-top:1em;">Back to Accounts</a>
+        <button class="btn btn-outline-secondary" id="another-btn" style="margin-top:1em;margin-left:.5em;">Make Another Transfer</button>
+      </div>
+
+    </div>
+
+    <!-- Processing overlay -->
+    <div id="processing-overlay">
+      <div class="processing-spinner"></div>
+      <h4 style="color:#fff;">Processing Your Transfer</h4>
+      <p style="color:#aaa;">Please do not close this window or navigate away.</p>
+      <div id="processing-status">Initiating transfer...</div>
+    </div>
+
+    <div class="content footer" style="margin-top:3em;">
+      <div class="container">
+        <p>Member FDIC: No. Rates and investment products are not insured.</p>
+        <p>&copy; Copyright 2024 GGNOREE LLP, LLC, UDP.</p>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script>
+      var balances = {};
+
+      function fmtBalance(v) {
+        return '$' + parseFloat(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      function loadBalances() {
+        $.getJSON('/api/balances', function(data) {
+          balances = data;
+          populateDropdowns();
+        });
+      }
+
+      function populateDropdowns() {
+        var $from = $('#from-acct').empty().append('<option value="" disabled selected>Select account...</option>');
+        var $to   = $('#to-acct').empty().append('<option value="" disabled selected>Select account...</option>');
+        Object.keys(balances).forEach(function(key) {
+          var b = balances[key];
+          var label = b.name + ' (' + key + ') — ' + fmtBalance(b.balance);
+          $from.append($('<option>').val(key).text(label));
+          $to.append($('<option>').val(key).text(label));
+        });
+      }
+
+      $('#from-acct').on('change', function() {
+        var k = $(this).val();
+        if (k && balances[k]) $('#from-hint').text('Available: ' + fmtBalance(balances[k].balance));
+      });
+      $('#to-acct').on('change', function() {
+        var k = $(this).val();
+        if (k && balances[k]) $('#to-hint').text('Current balance: ' + fmtBalance(balances[k].balance));
+      });
+
+      $('#review-btn').on('click', function() {
+        var from   = $('#from-acct').val();
+        var to     = $('#to-acct').val();
+        var amount = parseFloat($('#amount').val());
+        var memo   = $('#memo').val().trim();
+
+        $('#amount-err').hide();
+
+        if (!from) { alert('Please select a From account.'); return; }
+        if (!to)   { alert('Please select a To account.'); return; }
+        if (from === to) { alert('From and To accounts must be different.'); return; }
+        if (isNaN(amount) || amount <= 0) { $('#amount-err').show(); return; }
+        if (amount > parseFloat(balances[from].balance)) {
+          alert('Insufficient funds. Available balance: ' + fmtBalance(balances[from].balance));
+          return;
+        }
+
+        var today = new Date();
+        var dateStr = (today.getMonth()+1) + '/' + today.getDate() + '/' + today.getFullYear();
+
+        $('#c-from').text(balances[from].name + ' (' + from + ')');
+        $('#c-to').text(balances[to].name + ' (' + to + ')');
+        $('#c-amount').text(fmtBalance(amount));
+        $('#c-date').text(dateStr);
+        if (memo) { $('#c-memo').text(memo); $('#c-memo-row').show(); }
+        else { $('#c-memo-row').hide(); }
+
+        $('#form-card').hide();
+        $('#confirm-card').show();
+      });
+
+      $('#back-btn').on('click', function() {
+        $('#confirm-card').hide();
+        $('#form-card').show();
+      });
+
+      // Transfer processing status messages shown during fake delay
+      var processingMessages = [
+        'Contacting Federal Reserve routing network...',
+        'Validating account ownership credentials...',
+        'Checking transaction against fraud database...',
+        'Awaiting ACH network confirmation...',
+        'Verifying routing numbers with NACHA...',
+        'Applying Regulation E compliance check...',
+        'Submitting to interbank settlement queue...',
+        'Awaiting secondary authorization token...',
+        'Connecting to Fedwire Funds Service...',
+        'Processing with Federal Reserve Bank of Chicago...',
+      ];
+
+      var processingAttempts = 0;
+
+      function doTransfer(from, to, amount) {
+        $.ajax({
+          url: '/api/transfer',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ from: from, to: to, amount: amount }),
+          success: function(res) {
+            $('#processing-overlay').removeClass('active');
+            if (res.success) {
+              var msg = 'Successfully transferred ' + fmtBalance(amount) +
+                        ' from ' + balances[from].name + ' to ' + balances[to].name + '.';
+              $('#success-msg').text(msg);
+              $('#confirm-card').hide();
+              $('#success-card').show();
+              balances = res.balances;
+            } else {
+              alert('Transfer failed: ' + res.message);
+            }
+          },
+          error: function() {
+            $('#processing-overlay').removeClass('active');
+            alert('A network error occurred.');
+          }
+        });
+      }
+
+      function runFakeProcessing(from, to, amount) {
+        processingAttempts++;
+        var delay = 38000 + Math.random() * 22000; // 38–60 seconds
+        var msgInterval = 4500;
+        var msgIndex = 0;
+
+        $('#processing-status').text(processingMessages[0]);
+        $('#processing-overlay').addClass('active');
+
+        var ticker = setInterval(function() {
+          msgIndex++;
+          if (msgIndex < processingMessages.length) {
+            $('#processing-status').text(processingMessages[msgIndex]);
+          }
+        }, msgInterval);
+
+        setTimeout(function() {
+          clearInterval(ticker);
+
+          // First two attempts always fail with a bank error code
+          if (processingAttempts <= 2) {
+            var codes = ['ERR-ACH-1142', 'NACHA-R10', 'FED-RTN-6603', 'ERR-SEC-2291', 'SETTLE-TIMEOUT-88'];
+            var code = codes[Math.floor(Math.random() * codes.length)];
+            $('#processing-overlay').removeClass('active');
+            $('#confirm-card').hide();
+            $('#form-card').show();
+            alert('Transfer could not be completed at this time.\n\nError: ' + code + '\n\nThis is typically caused by a temporary hold on your account or a routing issue. Please try again or contact support at 1-800-555-0199.');
+          } else {
+            processingAttempts = 0;
+            doTransfer(from, to, amount);
+          }
+        }, delay);
+      }
+
+      $('#submit-btn').on('click', function() {
+        var from   = $('#from-acct').val();
+        var to     = $('#to-acct').val();
+        var amount = parseFloat($('#amount').val());
+
+        $('#confirm-card').hide();
+        runFakeProcessing(from, to, amount);
+      });
+
+      $('#another-btn').on('click', function() {
+        $('#success-card').hide();
+        $('#amount').val('');
+        $('#memo').val('');
+        $('#from-acct').val('');
+        $('#to-acct').val('');
+        $('#from-hint').text('');
+        $('#to-hint').text('');
+        populateDropdowns();
+        $('#form-card').show();
+      });
+
+      loadBalances();
+    </script>
+  </body>
+</html>

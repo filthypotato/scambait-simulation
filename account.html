@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="themes/basic/template.css">
+    <title>Your Accounts | South Federal Holdings</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+      /* ── Net Worth Bar ── */
+      #networth-bar {
+        background: linear-gradient(90deg,#4caf50,#8bc34a);
+        color:#fff; padding:.6em 1.5em; margin-bottom:1em;
+        border-radius:6px; display:flex; justify-content:space-between; align-items:center;
+      }
+      #networth-bar .nw-label { font-size:.8em; opacity:.85; }
+      #networth-bar .nw-value { font-size:1.4em; font-weight:700; }
+      #networth-bar .nw-block { text-align:center; }
+
+      /* ── Profile card ── */
+      #profile-card {
+        background:#fff; border:1px solid #ddd; border-radius:8px;
+        padding:1.2em; margin-bottom:1em; display:flex; align-items:center; gap:1em;
+      }
+      #profile-avatar {
+        width:56px; height:56px; border-radius:50%;
+        background:var(--secondary-bg-color); color:#fff;
+        display:flex; align-items:center; justify-content:center;
+        font-size:1.6em; font-weight:700; flex-shrink:0;
+      }
+      #profile-info { flex:1; }
+      #profile-info .pname { font-weight:700; font-size:1.05em; }
+      #profile-info .pmeta { font-size:.78em; color:#888; }
+      #profile-info .paccount { font-size:.8em; color:#555; margin-top:2px; }
+      #profile-badge {
+        background:#e8f5e9; border:1px solid #a5d6a7; color:#2e7d32;
+        font-size:.72em; padding:3px 10px; border-radius:20px; font-weight:600;
+      }
+
+      /* ── Credit Score widget ── */
+      #credit-widget {
+        background:#fff; border:1px solid #ddd; border-radius:8px;
+        padding:1em; margin-bottom:1em; text-align:center;
+      }
+      #credit-widget .cs-score { font-size:2.4em; font-weight:700; color:#2e7d32; }
+      #credit-widget .cs-label { font-size:.75em; color:#888; margin-bottom:.3em; }
+      #credit-widget .cs-bar-bg {
+        background:#eee; border-radius:20px; height:8px; margin:.6em 0;
+      }
+      #credit-widget .cs-bar-fill {
+        background:linear-gradient(90deg,#f44336 0%,#ff9800 35%,#ffeb3b 55%,#8bc34a 75%,#4caf50 100%);
+        width:72%; height:100%; border-radius:20px;
+      }
+      #credit-widget .cs-range { display:flex; justify-content:space-between; font-size:.7em; color:#bbb; }
+      #credit-widget .cs-update { font-size:.72em; color:#aaa; margin-top:.4em; }
+
+      /* ── Security Center widget ── */
+      #security-widget {
+        background:#fff; border:1px solid #ddd; border-radius:8px;
+        padding:1em; margin-bottom:1em;
+      }
+      #security-widget h6 { font-weight:700; margin-bottom:.7em; font-size:.9em; }
+      .sec-row { display:flex; align-items:center; font-size:.82em; margin-bottom:.45em; }
+      .sec-check { color:#4caf50; font-size:1em; margin-right:.5em; font-weight:700; }
+      .sec-warn  { color:#ff9800; font-size:1em; margin-right:.5em; font-weight:700; }
+
+      /* ── Banker contact card ── */
+      #banker-card {
+        background:#f5f5f5; border:1px solid #ddd; border-radius:8px;
+        padding:1em; margin-bottom:1em; font-size:.82em;
+      }
+      #banker-card .bk-name { font-weight:700; font-size:1em; }
+      #banker-card .bk-title { color:#888; font-size:.85em; }
+
+      /* ── Pending / alerts ── */
+      #pending-banner {
+        background:#fff3cd; border:1px solid #ffc107; border-radius:6px;
+        padding:.7em 1em; margin-bottom:1em; font-size:.85em;
+      }
+      #pending-banner strong { color:#856404; }
+
+      /* ── Account row improvements ── */
+      .acct-chip {
+        display:inline-block; background:#e8f5e9; color:#2e7d32;
+        font-size:.65em; padding:2px 8px; border-radius:10px;
+        font-weight:600; vertial-align:middle; margin-left:6px;
+      }
+      .acct-sublabel { font-size:.75em; color:#999; margin-top:2px; }
+
+      /* ── Device warning bar ── */
+      #device-warning {
+        background:#fff3e0; border:1px solid #ff9800; border-radius:6px;
+        padding:.65em 1em; margin-bottom:1em; font-size:.83em;
+        display:none; align-items:center; gap:1em;
+      }
+      #device-warning .dw-icon { font-size:1.2em; }
+      #device-warning a { color:#e65100; font-weight:600; }
+
+      /* ── Modal shared ── */
+      .sfb-overlay {
+        display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.65); z-index:10000;
+        align-items:center; justify-content:center;
+      }
+      .sfb-overlay .modal-content { border-top:4px solid var(--secondary-bg-color); }
+      .sfb-overlay.danger .modal-content { border-top-color:#c0392b; }
+      .sfb-overlay.warn   .modal-content { border-top-color:#e67e22; }
+      .sfb-overlay.info   .modal-content { border-top-color:#2980b9; }
+
+      /* ── Callback scheduler ── */
+      .timeslot-btn {
+        display:block; width:100%; text-align:left; margin-bottom:6px;
+        background:#f5f5f5; border:1px solid #ddd; border-radius:6px;
+        padding:.5em .9em; cursor:pointer; font-size:.9em;
+      }
+      .timeslot-btn:hover, .timeslot-btn.selected {
+        background:#e8f5e9; border-color:#4caf50;
+      }
+
+      /* ── Progress stepper ── */
+      .step-dots { display:flex; gap:6px; margin-bottom:.7em; }
+      .step-dot { width:10px; height:10px; border-radius:50%; background:#ddd; }
+      .step-dot.done { background:#4caf50; }
+      .step-dot.active { background:#ff9800; }
+    </style>
+  </head>
+  <body>
+
+  <div class="preheader">
+    <div class="container">
+      <div class="row"><div class="col-md-12">
+        <nav><ul>
+          <li>Products</li><li>Services</li><li>Help</li>
+          <li style="margin-left:auto;font-weight:600;" id="preheader-name">Robert J. Harrington</li>
+        </ul></nav>
+      </div></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="container">
+      <div class="row"><div class="col-md-12">
+        <h2 style="margin-top:8px;">
+          <span id="logo" class="oi" data-glyph="flag"></span>
+          South Federal Holdings of Illinois
+        </h2>
+        <div class="header-menu">
+          <nav><ul class="nav mx-auto">
+            <li class="nav-item"><a class="nav-link active" href="/account">Your Accounts</a></li>
+            <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+            <li class="nav-item"><a class="nav-link" href="/inbox">Inbox <span class="badge badge-pill" style="background:#c0392b;color:#fff;font-size:.7em;">5</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          </ul></nav>
+        </div>
+      </div></div>
+    </div>
+  </header>
+
+  <div class="menu">
+    <div class="container"><div class="row"><div class="col-md-12">
+      <nav><ul class="nav mx-auto">
+        <li class="nav-item"><a class="nav-link active" href="/account">Your Accounts</a></li>
+        <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+        <li class="nav-item"><a class="nav-link" href="/inbox">Inbox</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+      </ul></nav>
+    </div></div></div>
+  </div>
+
+  <div class="container" id="stuff">
+
+    <div id="loading"><h3>Please Just Wait A Moment...</h3></div>
+    <br/>
+
+    <!-- Login message bar -->
+    <div id="loginmessage">
+      Welcome back, <strong><span id="user-name-bar">Valued Customer</span></strong> &nbsp;|&nbsp;
+      Last login: <span id="last-login-info">April 14, 2026 &mdash; 9:41 AM &mdash; Windows 11 / Chrome &mdash; Chicago, IL</span>
+      &nbsp;|&nbsp; <a href="#" id="not-you-link" style="font-size:.85em;color:#c0392b;">Not you?</a>
+    </div>
+
+    <!-- Device warning banner (shows briefly then fades) -->
+    <div id="device-warning">
+      <span class="dw-icon">&#128241;</span>
+      <span><strong>New device detected.</strong> A verification code has been sent to your phone ending in <strong>***-***-5523</strong>. <a href="#" id="device-verify-link">Enter code</a> to fully unlock your session.</span>
+    </div>
+
+    <!-- Net Worth Summary Bar -->
+    <div id="networth-bar">
+      <div class="nw-block">
+        <div class="nw-label">Total Deposits</div>
+        <div class="nw-value" id="nw-deposits">$581,542.50</div>
+      </div>
+      <div class="nw-block">
+        <div class="nw-label">Total Available</div>
+        <div class="nw-value" id="nw-available">$581,542.50</div>
+      </div>
+      <div class="nw-block">
+        <div class="nw-label">Pending</div>
+        <div class="nw-value" style="color:#fffde7;">$0.00</div>
+      </div>
+      <div class="nw-block">
+        <div class="nw-label">Member Since</div>
+        <div class="nw-value" style="font-size:1em;">Jan 2004</div>
+      </div>
+    </div>
+
+    <!-- Pending alert banner -->
+    <div id="pending-banner">
+      &#9888;&nbsp; <strong>2 pending items require your attention.</strong>
+      You have an unverified external payee and an unsigned document in your inbox.
+      <a href="/inbox" style="color:#856404;font-weight:600;margin-left:6px;">View &rsaquo;</a>
+    </div>
+
+    <div id="mainrow" class="row">
+
+      <!-- ── LEFT SIDEBAR ── -->
+      <div class="col-md-4">
+
+        <!-- Profile Card -->
+        <div id="profile-card">
+          <div id="profile-avatar" id="profile-avatar-circle">R</div>
+          <div id="profile-info">
+            <div class="pname" id="profile-name">Robert J. Harrington</div>
+            <div class="pmeta">Member since January 2004 &nbsp;&middot;&nbsp; 22 years</div>
+            <div class="paccount">Primary: Premium Checking &bull; XXXX3198</div>
+          </div>
+          <div id="profile-badge">Preferred</div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="notifications">
+          <h4>Welcome Back, <span id="user-name-card">Robert</span>!
+            <span id="notif-date">April 15, 2026</span>
+          </h4>
+          <p style="font-size:.85em;margin-bottom:.5em;">
+            <span class="oi" data-glyph="clock" aria-hidden="true"></span>
+            Last login: Apr 14 at 9:41 AM &mdash; Chicago, IL
+          </p>
+          <p>
+            <span class="oi" data-glyph="envelope-open"></span>
+            You have <strong>5</strong> unread documents
+          </p>
+          <a href="/inbox" class="btn btn-large" id="inb">View Inbox</a>
+        </div>
+
+        <!-- Credit Score widget -->
+        <div id="credit-widget">
+          <div class="cs-label">Your Credit Score</div>
+          <div class="cs-score">742</div>
+          <div style="font-size:.75em;font-weight:600;color:#4caf50;">GOOD &#9650; +11 pts last 30 days</div>
+          <div class="cs-bar-bg"><div class="cs-bar-fill"></div></div>
+          <div class="cs-range"><span>300</span><span>580</span><span>670</span><span>740</span><span>850</span></div>
+          <div class="cs-update">Last updated Apr 1, 2026 &middot; Powered by TransUnion&reg;</div>
+          <hr style="margin:.7em 0;"/>
+          <div style="display:flex;justify-content:space-between;font-size:.78em;color:#555;">
+            <span>On-time payments <strong style="color:#2e7d32;">98%</strong></span>
+            <span>Utilization <strong style="color:#2e7d32;">12%</strong></span>
+          </div>
+        </div>
+
+        <!-- Security Center -->
+        <div id="security-widget">
+          <h6>&#128274; Security Center</h6>
+          <div class="sec-row"><span class="sec-check">&#10003;</span> Two-Factor Authentication enabled</div>
+          <div class="sec-row"><span class="sec-check">&#10003;</span> Login alerts active</div>
+          <div class="sec-row"><span class="sec-check">&#10003;</span> Paperless statements</div>
+          <div class="sec-row"><span class="sec-check">&#10003;</span> Fraud monitoring: ON</div>
+          <div class="sec-row"><span class="sec-warn">&#9888;</span> <span>W-9 on file: <strong style="color:#c0392b;">Expired</strong> — <a href="#" id="w9-link">Update now</a></span></div>
+          <div class="sec-row"><span class="sec-warn">&#9888;</span> <span>External payee unverified — <a href="#" id="payee-link">Verify</a></span></div>
+        </div>
+
+        <!-- Your Banker -->
+        <div id="banker-card">
+          <div style="display:flex;align-items:center;gap:.8em;">
+            <img src="https://i.pravatar.cc/48?img=12" style="width:48px;height:48px;border-radius:50%;border:2px solid #ccc;" alt="Account Manager"/>
+            <div>
+              <div class="bk-name">Patricia Owens</div>
+              <div class="bk-title">Senior Relationship Manager</div>
+              <div style="color:#4caf50;font-size:.78em;">&#9679; Available now</div>
+            </div>
+          </div>
+          <hr style="margin:.6em 0;"/>
+          <div>Direct line: <strong>1-800-555-0199 ext. 3041</strong></div>
+          <div style="color:#888;font-size:.8em;">Mon–Fri 8am–6pm CT &nbsp;&middot;&nbsp; <a href="/contact">Send message</a></div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="full">Quick Links</h5>
+            <ul>
+              <li><a href="#">Order New Checks</a></li>
+              <li><a href="#" id="lost-card-link">Lost or Stolen Card</a></li>
+              <li><a href="#">Open New Account</a></li>
+              <li><a href="/contact">Contact Support</a></li>
+              <li><a href="#" id="wire-link">Wire Transfer</a></li>
+              <li><a href="#">Download Tax Documents</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <button id="contact" class="btn-warning">Contact Support</button>
+
+      </div><!-- /col-md-4 -->
+
+      <!-- ── MAIN CONTENT ── -->
+      <div class="col-md-8">
+
+        <!-- Quick Actions ribbon -->
+        <div id="filler">
+          <div class="row">
+            <ul class="vertical">
+              <li><span class="oi" data-glyph="book"></span><a href="/account/details/">All transactions</a></li>
+              <li><span class="oi" data-glyph="calculator"></span><a href="/transfer">Make a transfer</a></li>
+              <li><span class="oi" data-glyph="briefcase"></span><a href="/contact">Contact support</a></li>
+              <li><span class="oi" data-glyph="info"></span><a href="#">Edit or add alerts</a></li>
+              <li><span class="oi" data-glyph="document"></span><a href="#">Go paperless</a></li>
+              <li><span class="oi" data-glyph="grid-three-up"></span><a href="#">Edit profile</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Account cards -->
+        <div class="row">
+          <div id="accountInfo">
+
+            <div class="accountRow">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5>Premium Checking <span>XXXX3198</span> <span class="acct-chip">PRIMARY</span></h5>
+                  <div class="acct-sublabel">Routing: 071000288 &nbsp;&middot;&nbsp; APY 0.05%</div>
+                  <hr/>
+                  <h1>$15,123.21</h1>
+                  <small style="color:#888;">Available &bull; No pending holds</small>
+                </div>
+                <div class="col-md-4">
+                  <ul class="vertical">
+                    <li><a href="/account/details/?n=3198">View transactions</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a href="/transfer">Make a transfer</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a class="moreactions" href="#">More actions</a><span class="oi" data-glyph="caret-right"></span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="accountRow">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5>Joint Savings <span>XXXX1329</span> <span class="acct-chip">JOINT</span></h5>
+                  <div class="acct-sublabel">Routing: 071000288 &nbsp;&middot;&nbsp; APY 0.35%</div>
+                  <hr/>
+                  <h1>$59,141.93</h1>
+                  <small style="color:#888;">Available &bull; No pending holds</small>
+                </div>
+                <div class="col-md-4">
+                  <ul class="vertical">
+                    <li><a href="/account/details/?n=1329">View transactions</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a href="/transfer">Make a transfer</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a class="moreactions" href="#">More actions</a><span class="oi" data-glyph="caret-right"></span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="accountRow">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5>Money Market <span>XXXX6993</span></h5>
+                  <div class="acct-sublabel">Routing: 071000288 &nbsp;&middot;&nbsp; APY 1.20%</div>
+                  <hr/>
+                  <h1>$507,277.36</h1>
+                  <small style="color:#888;">Available &bull; No pending holds</small>
+                </div>
+                <div class="col-md-4">
+                  <ul class="vertical">
+                    <li><a href="/account/details/?n=6993">View transactions</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a href="/transfer">Make a transfer</a><span class="oi" data-glyph="caret-right"></span></li>
+                    <li><a class="moreactions" href="#">More actions</a><span class="oi" data-glyph="caret-right"></span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Investment teaser (disabled) -->
+            <div class="accountRow" style="opacity:.55;">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5>Investment Portfolio <span>XXXX1940</span> <span class="acct-chip" style="background:#fff3e0;color:#e65100;">RESTRICTED</span></h5>
+                  <div class="acct-sublabel">Available after identity verification &nbsp;&middot;&nbsp; Brokerage</div>
+                  <hr/>
+                  <h1>$&#8203;&#8203;&#8203;&#8203;&#8203;&#9632;&#9632;,&#9632;&#9632;&#9632;.&#9632;&#9632;</h1>
+                  <small style="color:#c0392b;">Complete verification to unlock &rsaquo;</small>
+                </div>
+                <div class="col-md-4">
+                  <ul class="vertical">
+                    <li><a href="#" id="invest-unlock-link">Unlock access</a><span class="oi" data-glyph="caret-right"></span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /accountInfo -->
+
+          <!-- Account summary table -->
+          <table id="accounts" class="table table-striped">
+            <thead>
+              <tr>
+                <th>Type</th><th>Account</th><th>Available Balance</th><th>APY</th><th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><a href="/account/details/?n=3198">Premium Checking</a></td><td>XXXX3198</td><td>$15,123.21</td><td>0.05%</td><td><a href="/transfer">Transfer</a></td></tr>
+              <tr><td><a href="/account/details/?n=1329">Joint Savings</a></td><td>XXXX1329</td><td>$59,141.93</td><td>0.35%</td><td><a href="/transfer">Transfer</a></td></tr>
+              <tr><td><a href="/account/details/?n=6993">Money Market</a></td><td>XXXX6993</td><td>$507,277.36</td><td>1.20%</td><td><a href="/transfer">Transfer</a></td></tr>
+              <tr style="opacity:.5;"><td>Investment Portfolio</td><td>XXXX1940</td><td colspan="2"><em>Verification required</em></td><td>&mdash;</td></tr>
+            </tbody>
+          </table>
+        </div><!-- /row -->
+
+        <!-- Recent Transactions -->
+        <div id="activitylist" class="row">
+          <h4>Your most recent transactions:</h4>
+          <hr/>
+          <div id="recent-box">
+            <table id="pending" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th><th>Account</th><th>Description</th><th>Type</th><th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>02/11</td><td>XXXX3198</td><td>PAYPAL INST XFER</td><td>Debit</td><td><span class="badge badge-danger">$ -227.09</span></td></tr>
+                <tr><td>02/11</td><td>XXXX3198</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 846.33</span></td></tr>
+                <tr><td>02/11</td><td>XXXX3198</td><td>AOL</td><td>Debit</td><td><span class="badge badge-danger">$ -46.17</span></td></tr>
+                <tr><td>02/10</td><td>XXXX3198</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 151.89</span></td></tr>
+                <tr><td>02/08</td><td>XXXX3198</td><td>Spotify</td><td>Debit</td><td><span class="badge badge-danger">$ -172.80</span></td></tr>
+                <tr><td>02/07</td><td>XXXX3198</td><td>State Farm Home &amp; Auto</td><td>Debit</td><td><span class="badge badge-danger">$ -235.35</span></td></tr>
+                <tr><td>02/04</td><td>XXXX3198</td><td>Starbucks US*7KCR6M31L</td><td>Debit</td><td><span class="badge badge-danger">$ -28.65</span></td></tr>
+                <tr><td>02/04</td><td>XXXX3198</td><td>Petsmart US*DT6WSAGONX2I</td><td>Debit</td><td><span class="badge badge-danger">$ -72.34</span></td></tr>
+                <tr><td>02/01</td><td>XXXX3198</td><td>Cash Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 83.54</span></td></tr>
+                <tr><td>02/01</td><td>XXXX3198</td><td>Best Buy US*5T8OULXGE</td><td>Debit</td><td><span class="badge badge-danger">$ -55.62</span></td></tr>
+                <tr><td>01/31</td><td>XXXX3198</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 134.88</span></td></tr>
+                <tr><td>01/29</td><td>XXXX3198</td><td>****5782</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 8.39</span></td></tr>
+                <tr><td>01/27</td><td>XXXX3198</td><td>Verizon Wireless</td><td>Debit</td><td><span class="badge badge-danger">$ -145.05</span></td></tr>
+                <tr><td>01/25</td><td>XXXX3198</td><td>Spotify</td><td>Debit</td><td><span class="badge badge-danger">$ -282.65</span></td></tr>
+                <tr><td>01/24</td><td>XXXX3198</td><td>PG&amp;E</td><td>Debit</td><td><span class="badge badge-danger">$ -106.35</span></td></tr>
+                <tr><td>01/24</td><td>XXXX3198</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 535.78</span></td></tr>
+                <tr><td>01/20</td><td>XXXX3198</td><td>Sunoco US*XQ7ULN92FO0</td><td>Debit</td><td><span class="badge badge-danger">$ -217.15</span></td></tr>
+                <tr><td>01/20</td><td>XXXX3198</td><td>****4318</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 164.99</span></td></tr>
+                <tr><td>01/18</td><td>XXXX3198</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 787.16</span></td></tr>
+                <tr><td>01/18</td><td>XXXX3198</td><td>American Airlines US*BETG105DC</td><td>Debit</td><td><span class="badge badge-danger">$ -125.48</span></td></tr>
+                <tr><td>01/18</td><td>XXXX3198</td><td>AMZN Mktp US*J2AZU</td><td>Debit</td><td><span class="badge badge-danger">$ -73.30</span></td></tr>
+                <tr><td>01/17</td><td>XXXX3198</td><td>Cash Withdrawal</td><td>Debit</td><td><span class="badge badge-danger">$ -223.04</span></td></tr>
+                <tr><td>01/17</td><td>XXXX3198</td><td>****8133</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 999.32</span></td></tr>
+                <tr><td>01/16</td><td>XXXX3198</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 861.87</span></td></tr>
+                <tr><td>01/16</td><td>XXXX3198</td><td>Hulu</td><td>Debit</td><td><span class="badge badge-danger">$ -271.71</span></td></tr>
+                <tr><td>01/15</td><td>XXXX3198</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 203.11</span></td></tr>
+                <tr><td>01/14</td><td>XXXX3198</td><td>Sunoco US*W95Q7TUJZIS</td><td>Debit</td><td><span class="badge badge-danger">$ -77.63</span></td></tr>
+                <tr><td>01/14</td><td>XXXX3198</td><td>Kroger US*ZPLDEKA5TX</td><td>Debit</td><td><span class="badge badge-danger">$ -37.56</span></td></tr>
+                <tr><td>01/13</td><td>XXXX3198</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 489.81</span></td></tr>
+                <tr><td>02/02</td><td>XXXX1329</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 182.24</span></td></tr>
+                <tr><td>01/30</td><td>XXXX1329</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 559.54</span></td></tr>
+                <tr><td>01/27</td><td>XXXX1329</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 668.57</span></td></tr>
+                <tr><td>01/24</td><td>XXXX1329</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 945.14</span></td></tr>
+                <tr><td>01/22</td><td>XXXX1329</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 585.55</span></td></tr>
+                <tr><td>01/20</td><td>XXXX1329</td><td>Cash Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 916.41</span></td></tr>
+                <tr><td>01/17</td><td>XXXX1329</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 315.06</span></td></tr>
+                <tr><td>01/17</td><td>XXXX1329</td><td>****1510</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 847.98</span></td></tr>
+                <tr><td>02/10</td><td>XXXX6993</td><td>****5335</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 302.25</span></td></tr>
+                <tr><td>02/05</td><td>XXXX6993</td><td>****5197</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 888.34</span></td></tr>
+                <tr><td>02/04</td><td>XXXX6993</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 540.08</span></td></tr>
+                <tr><td>02/04</td><td>XXXX6993</td><td>****1438</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 810.16</span></td></tr>
+                <tr><td>01/29</td><td>XXXX6993</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 337.32</span></td></tr>
+                <tr><td>01/21</td><td>XXXX6993</td><td>****7451</td><td>Balance Transfer</td><td><span class="badge badge-success">$ 477.57</span></td></tr>
+                <tr><td>01/20</td><td>XXXX6993</td><td>Interest</td><td>Credit</td><td><span class="badge badge-success">$ 325.41</span></td></tr>
+                <tr><td>01/20</td><td>XXXX6993</td><td>Direct Deposit</td><td>Credit</td><td><span class="badge badge-success">$ 348.37</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <a href="#" id="viewall">Load More</a>
+        </div><!-- /activitylist -->
+
+      </div><!-- /col-md-8 -->
+    </div><!-- /mainrow -->
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+  </div><!-- /container -->
+
+  <div class="content footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>South Federal Holdings of Illinois</strong><br/>
+          Member FDIC: No. &nbsp;&middot;&nbsp; Equal Housing Lender &nbsp;&middot;&nbsp; NMLS #1307944<br/>
+          Deposits are NOT insured by the FDIC or any government agency.<br/>
+          Routing Number: 071000288</p>
+        </div>
+        <div class="col-md-6" style="text-align:right;">
+          <p>The bank information provided on this website is only valid for those living in states that end in G and no others.
+          Any attempt to use this website without authorized access is prohibited by the 11th circuit court of the high magistrates.
+          No offers may be made or accepted from any resident outside of these states due to various state regulations and
+          registration requirements regarding investment products and services.</p>
+          <p>&copy; Copyright 2020 GGNOREE LLP, LLC, UDP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODALS ══════════════ -->
+
+  <!-- 1. Identity Verification (fires ~4s after load) -->
+  <div id="verifyIdentityModal" class="sfb-overlay danger" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:480px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;">
+        <div class="modal-header" style="background:#c0392b;color:#fff;">
+          <h5 class="modal-title">&#9888; Identity Verification Required</h5>
+        </div>
+        <div class="modal-body">
+          <div class="step-dots">
+            <div class="step-dot active" id="vdot1"></div>
+            <div class="step-dot" id="vdot2"></div>
+            <div class="step-dot" id="vdot3"></div>
+          </div>
+          <p>For your security, we need to verify your identity before you can access your accounts. This is required due to our updated <strong>Regulation E compliance policy</strong> (effective Q1 2024).</p>
+          <div class="form-group">
+            <label><strong>Last 4 digits of your Social Security Number</strong></label>
+            <input class="form-control" id="ssn-input" type="text" maxlength="4" placeholder="_ _ _ _" style="letter-spacing:6px;font-size:1.3em;max-width:120px;"/>
+          </div>
+          <div class="form-group" style="margin-top:1em;">
+            <label><strong>Date of Birth</strong></label>
+            <input class="form-control" id="dob-input" type="text" placeholder="MM/DD/YYYY" style="max-width:160px;"/>
+          </div>
+          <small id="verify-error" style="color:#c0392b;display:none;">The information you entered does not match our records. Please try again. Attempts remaining: <span id="verify-attempts-left">3</span></small>
+        </div>
+        <div class="modal-footer">
+          <small style="color:#999;flex:1;text-align:left;">Ref: SEC-REG-E-2024-0117 &nbsp;&middot;&nbsp; Attempt <span id="verify-attempt-num">1</span> of 5</small>
+          <button type="button" id="verify-submit" class="btn btn-danger">Verify &amp; Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Security Question Challenge -->
+  <div id="securityQModal" class="sfb-overlay info" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:460px;">
+      <div class="modal-content" style="border-top:4px solid #2980b9;">
+        <div class="modal-header" style="background:#2980b9;color:#fff;">
+          <h5 class="modal-title">&#128272; Security Question</h5>
+        </div>
+        <div class="modal-body">
+          <div class="step-dots">
+            <div class="step-dot done" id="vdot1b"></div>
+            <div class="step-dot active" id="vdot2b"></div>
+            <div class="step-dot" id="vdot3b"></div>
+          </div>
+          <p>To complete verification, please answer your security question on file.</p>
+          <div class="form-group">
+            <label><strong id="security-question-text">What was the name of your childhood best friend?</strong></label>
+            <input class="form-control" id="sq-answer" type="text" placeholder="Your answer"/>
+          </div>
+          <small id="sq-error" style="color:#c0392b;display:none;">That answer does not match our records. Please try again.</small>
+        </div>
+        <div class="modal-footer">
+          <small style="color:#999;flex:1;text-align:left;">Ref: SQ-AUTH-2024 &nbsp;&middot;&nbsp; <a href="#" style="color:#999;">Forgot answer?</a></small>
+          <button type="button" id="sq-submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. W-9 Required Modal -->
+  <div id="w9Modal" class="sfb-overlay warn" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:520px;">
+      <div class="modal-content" style="border-top:4px solid #e67e22;">
+        <div class="modal-header" style="background:#e67e22;color:#fff;">
+          <h5 class="modal-title">&#128203; IRS W-9 Form Required</h5>
+        </div>
+        <div class="modal-body">
+          <p>Federal law requires South Federal Holdings of Illinois to collect a completed <strong>IRS Form W-9 (Request for Taxpayer Identification Number)</strong> before processing transfers exceeding <strong>$600</strong> in a calendar year.</p>
+          <p>Our records show your W-9 on file has <strong>expired (filed: March 12, 2021)</strong>. You must complete an updated W-9 before any transfers can be processed.</p>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:.9em;margin:1em 0;font-size:.88em;">
+            <strong>&#9432; How to complete your W-9:</strong><br/>
+            Option A — Download, sign, and upload via secure document portal (5–7 business days to process)<br/>
+            Option B — Call your relationship manager at <strong>1-800-555-0199 ext. 3041</strong> for a verbal attestation (same-day processing)
+          </div>
+          <div class="form-group">
+            <label style="font-size:.85em;">Your Tax Identification Number (TIN / SSN) — required for attestation</label>
+            <input class="form-control" id="w9-tin" type="text" placeholder="XXX-XX-XXXX" maxlength="11" style="max-width:200px;"/>
+          </div>
+          <small id="w9-error" style="color:#c0392b;display:none;">The TIN you entered could not be verified. Please call support.</small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="w9-later" class="btn btn-outline-secondary">Remind me later</button>
+          <button type="button" id="w9-submit" class="btn btn-warning">Submit W-9 Attestation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Unusual Activity -->
+  <div id="unusualActivityModal" class="sfb-overlay warn" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:480px;">
+      <div class="modal-content" style="border-top:4px solid #e67e22;">
+        <div class="modal-header" style="background:#e67e22;color:#fff;">
+          <h5 class="modal-title">&#128276; Unusual Activity Detected</h5>
+        </div>
+        <div class="modal-body">
+          <p>Our fraud monitoring system has flagged <strong>unusual activity</strong> on your account in the past 24 hours. To protect your funds, some features have been temporarily limited.</p>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:1em;text-align:center;margin:1em 0;">
+            <strong style="font-size:1.3em;">1-800-555-0199</strong><br/>
+            <small>Fraud Prevention Line &mdash; Available 24/7 &mdash; Avg. hold time: 14 min</small>
+          </div>
+          <p style="font-size:.85em;">Have your account number and the following case reference ready:</p>
+          <p style="font-size:.85em;color:#666;">Case Reference: <strong>FR-2024-<span id="fraud-case-num"></span></strong></p>
+          <hr/>
+          <p style="font-size:.8em;color:#888;">Note: If you do not call within <strong>48 hours</strong>, affected accounts may be temporarily frozen as a precautionary measure per our Fraud Prevention Policy (Section 12.3).</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="unusual-dismiss" class="btn btn-outline-secondary">I will call later</button>
+          <button type="button" id="unusual-called" class="btn btn-warning">I already called</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Session Reauth -->
+  <div id="reauthModal" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:420px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">&#128274; Session Security Check</h5>
+        </div>
+        <div class="modal-body">
+          <p>Your session is still active, but we need to verify it's still you. Please re-enter your password to continue.</p>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-control" id="reauth-password" type="password" placeholder="Enter your password"/>
+          </div>
+          <small id="reauth-error" style="color:#c0392b;display:none;">Incorrect password. Please try again.</small>
+        </div>
+        <div class="modal-footer">
+          <a href="/logout" class="btn btn-outline-secondary">Log Out</a>
+          <button type="button" id="reauth-submit" class="btn btn-success">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Callback Scheduler -->
+  <div id="callbackModal" class="sfb-overlay info" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:500px;">
+      <div class="modal-content" style="border-top:4px solid #2980b9;">
+        <div class="modal-header" style="background:#2980b9;color:#fff;">
+          <h5 class="modal-title">&#9990; Schedule a Callback</h5>
+        </div>
+        <div class="modal-body" id="callback-body">
+          <p>Our support team is currently experiencing <strong>high call volume</strong>. Schedule a callback and a specialist will contact you at your registered number ending in <strong>***-***-5523</strong>.</p>
+          <p style="font-size:.85em;color:#555;">Available callback slots (all times Central):</p>
+          <div id="timeslot-list"></div>
+          <small id="callback-error" style="color:#c0392b;display:none;">Please select a time slot.</small>
+        </div>
+        <div class="modal-footer" id="callback-footer">
+          <button type="button" id="callback-cancel" class="btn btn-outline-secondary">Cancel</button>
+          <button type="button" id="callback-confirm" class="btn btn-primary">Confirm Callback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Device Verification Code -->
+  <div id="deviceCodeModal" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:420px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">&#128241; New Device Verification</h5>
+        </div>
+        <div class="modal-body">
+          <p>A 6-digit verification code was sent to your phone ending in <strong>***-***-5523</strong>. Enter it below to fully unlock this session.</p>
+          <div class="form-group">
+            <input class="form-control" id="device-code-input" type="text" maxlength="6" placeholder="_ _ _ _ _ _" style="letter-spacing:8px;font-size:1.4em;max-width:160px;"/>
+          </div>
+          <small id="device-code-error" style="color:#c0392b;display:none;">Invalid code. Please try again.</small>
+          <div style="margin-top:.8em;font-size:.82em;">
+            Didn't receive it? <a href="#" id="resend-code-link">Resend code</a> &nbsp;&middot;&nbsp;
+            <a href="#" id="call-instead-link">Call me instead</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="device-code-submit" class="btn btn-success">Verify Device</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Wire Transfer / Cooling Period -->
+  <div id="wireModal" class="sfb-overlay info" style="display:none;">
+    <div class="modal-dialog" role="document" style="margin:auto;max-width:520px;">
+      <div class="modal-content" style="border-top:4px solid #2980b9;">
+        <div class="modal-header" style="background:#2980b9;color:#fff;">
+          <h5 class="modal-title">&#128176; Domestic Wire Transfer</h5>
+        </div>
+        <div class="modal-body">
+          <div style="background:#e3f2fd;border:1px solid #90caf9;border-radius:6px;padding:.8em;margin-bottom:1em;font-size:.84em;">
+            &#9432; <strong>First-time wire transfer.</strong> New external payees require a mandatory <strong>72-hour security cooling period</strong> per federal Regulation CC before funds can be sent.
+          </div>
+          <div class="form-group">
+            <label><strong>Recipient Name</strong></label>
+            <input class="form-control" id="wire-name" type="text" placeholder="Full legal name"/>
+          </div>
+          <div class="form-group">
+            <label><strong>Routing Number</strong></label>
+            <input class="form-control" id="wire-routing" type="text" maxlength="9" placeholder="9-digit ABA routing number"/>
+            <small id="wire-routing-status" style="font-size:.8em;"></small>
+          </div>
+          <div class="form-group">
+            <label><strong>Account Number</strong></label>
+            <input class="form-control" id="wire-account" type="text" placeholder="Recipient account number"/>
+          </div>
+          <div class="form-group">
+            <label><strong>Amount ($)</strong></label>
+            <input class="form-control" id="wire-amount" type="number" placeholder="0.00" style="max-width:160px;"/>
+          </div>
+          <div class="form-group">
+            <label><strong>Purpose of Wire</strong></label>
+            <select class="form-control" id="wire-purpose">
+              <option value="">Select a purpose...</option>
+              <option>Real estate purchase</option>
+              <option>Business payment</option>
+              <option>Personal transfer</option>
+              <option>Investment funding</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <small id="wire-error" style="color:#c0392b;display:none;"></small>
+        </div>
+        <div class="modal-footer">
+          <small style="color:#999;flex:1;text-align:left;">Wire fee: $25.00 domestic &nbsp;&middot;&nbsp; $45.00 international</small>
+          <button type="button" id="wire-cancel" class="btn btn-outline-secondary">Cancel</button>
+          <button type="button" id="wire-submit" class="btn btn-primary">Submit Wire Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Fake Windows Update Overlay -->
+  <div id="fakeUpdateOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#0078d7;z-index:99999;color:#fff;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;text-align:center;">
+      <div style="font-size:5em;margin-bottom:.3em;">&#9881;</div>
+      <h1 style="font-size:2.2em;font-weight:300;margin-bottom:.2em;">Working on updates</h1>
+      <p style="font-size:1em;color:rgba(255,255,255,.8);margin-bottom:2em;">Don't turn off your PC. This will take a while.</p>
+      <div id="update-progress-bar-bg" style="width:480px;max-width:90vw;height:4px;background:rgba(255,255,255,.3);border-radius:2px;margin-bottom:1em;">
+        <div id="update-progress-bar" style="height:100%;width:0%;background:#fff;border-radius:2px;transition:width .4s;"></div>
+      </div>
+      <div id="update-pct" style="font-size:1.1em;margin-bottom:.5em;">0% complete</div>
+      <div id="update-stage" style="font-size:.85em;color:rgba(255,255,255,.7);">Initializing...</div>
+    </div>
+  </div>
+
+  <!-- 10. Nice Try Lol Modal -->
+  <div id="niceTryModal" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:420px;">
+      <div class="modal-content" style="border-top:4px solid #4caf50;text-align:center;">
+        <div class="modal-body" style="padding:2.5em 2em;">
+          <div style="font-size:4em;margin-bottom:.3em;">&#128514;</div>
+          <h4>Nice try, lol.</h4>
+          <p style="color:#888;font-size:.9em;">Our systems have flagged this session for <strong>suspicious intent</strong>. Your enthusiasm for wire transfers has been noted.</p>
+          <p style="color:#888;font-size:.85em;">A report has been filed with:<br/>
+            &#x2022; The FBI Cyber Division<br/>
+            &#x2022; Interpol Financial Crimes Unit<br/>
+            &#x2022; <strong>Your grandma</strong>
+          </p>
+          <p style="font-size:.75em;color:#bbb;margin-top:1em;">Case ref: LOL-<span id="nice-try-ref"></span></p>
+          <button class="btn btn-success" id="nice-try-ok" style="margin-top:1em;">Ok fine</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. Support Chat Widget -->
+  <div id="chat-widget" style="position:fixed;bottom:1.5em;right:1.5em;z-index:9000;font-family:'Segoe UI',Arial,sans-serif;">
+    <div id="chat-bubble" style="background:var(--secondary-bg-color);color:#fff;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:1.6em;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);">
+      &#128172;
+    </div>
+    <div id="chat-box" style="display:none;width:320px;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.18);margin-bottom:.5em;overflow:hidden;border:1px solid #ddd;">
+      <div style="background:var(--secondary-bg-color);color:#fff;padding:.8em 1em;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <strong>South Federal Support</strong><br/>
+          <span style="font-size:.75em;opacity:.85;">&#9679; Online — Avg reply: 2 min</span>
+        </div>
+        <span id="chat-close" style="cursor:pointer;font-size:1.2em;">&#10005;</span>
+      </div>
+      <div id="chat-messages" style="height:260px;overflow-y:auto;padding:.8em;background:#f9f9f9;display:flex;flex-direction:column;gap:.5em;"></div>
+      <div style="display:flex;border-top:1px solid #eee;">
+        <input id="chat-input" type="text" placeholder="Type a message..." style="flex:1;border:none;padding:.7em .9em;font-size:.88em;outline:none;background:#fff;"/>
+        <button id="chat-send" style="padding:.7em 1em;background:var(--secondary-bg-color);color:#fff;border:none;cursor:pointer;font-size:.9em;">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ NEW TRAP OVERLAYS ══════════════ -->
+
+  <!-- Fake BSOD -->
+  <div id="bsodOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#0000aa;z-index:999999;color:#fff;font-family:'Courier New',monospace;padding:3em;overflow:hidden;">
+    <h2>A problem has been detected and Windows has been shut down to prevent damage to your computer.</h2>
+    <br/><p>CRITICAL_SCAMMER_DETECTED</p><br/>
+    <p>If this is the first time you've seen this Stop error screen,<br/>restart your computer. If this screen appears again, follow<br/>these steps:</p><br/>
+    <p>Check to make sure you're not currently attempting fraud. If problems<br/>continue, disable or remove any newly installed software. Disable<br/>BIOS memory options such as caching or shadowing.<br/>If you need to use Safe Mode to repair this computer, press F8 at startup.</p><br/>
+    <p>Technical information:</p>
+    <p>*** STOP: 0x000000SCAM (0xDEADBEEF, 0xC0392B00, 0x00FEDORA, 0x4B1T3R5)</p><br/>
+    <p style="font-size:.85em;">Collecting error information... <span id="bsod-pct">0</span>%</p>
+    <p style="font-size:.75em;color:#aaa;margin-top:2em;">South Federal Holdings Security Suite v4.2.1 — Scammer Detected Module</p>
+  </div>
+
+  <!-- Matrix Rain Canvas -->
+  <div id="matrixOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;pointer-events:none;">
+    <canvas id="matrixCanvas" style="width:100%;height:100%;"></canvas>
+  </div>
+
+  <!-- Fake SSL Certificate Error -->
+  <div id="certOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99997;font-family:Arial,sans-serif;padding:3em;overflow:auto;">
+    <div style="max-width:560px;margin:0 auto;">
+      <div style="display:flex;align-items:center;gap:1em;margin-bottom:1.5em;">
+        <div style="font-size:4em;">&#128274;</div>
+        <div><h2 style="color:#c0392b;margin:0;">Your connection is not private</h2><p style="color:#555;margin:.3em 0 0;">Attackers might be trying to steal your information from <strong>sfhi.bank.secure.gov</strong> (for example, passwords, messages, or credit cards).</p></div>
+      </div>
+      <div style="background:#fce4e4;border:1px solid #e57373;border-radius:6px;padding:1em;margin-bottom:1em;">
+        <strong>NET::ERR_CERT_AUTHORITY_INVALID</strong><br/>
+        <small style="color:#666;">This server could not prove that it is sfhi.bank.secure.gov; its security certificate is not trusted by your computer's operating system. This may be caused by a misconfiguration or an attacker intercepting your connection.</small>
+      </div>
+      <button onclick="document.getElementById('certOverlay').style.display='none';" style="background:#c0392b;color:#fff;border:none;padding:.7em 1.4em;border-radius:4px;cursor:pointer;">Back to safety</button>
+      <div style="margin-top:1em;"><a href="#" onclick="document.getElementById('certOverlay').style.display='none';return false;" style="color:#1a73e8;font-size:.85em;">Advanced</a></div>
+    </div>
+  </div>
+
+  <!-- Hacker Terminal Popup -->
+  <div id="hackerTerminal" style="display:none;position:fixed;bottom:2em;right:2em;width:420px;background:#111;color:#0f0;font-family:'Courier New',monospace;font-size:.8em;border:2px solid #0f0;border-radius:4px;z-index:99996;padding:1em;max-height:260px;overflow-y:auto;">
+    <div style="color:#0f0;margin-bottom:.5em;">C:\Windows\System32&gt; <span style="color:#ff0;">WARNING: SCAMMER DETECTED</span></div>
+    <div id="hacker-log"></div>
+  </div>
+
+  <!-- Queue Number Overlay -->
+  <div id="queueOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:420px;">
+      <div class="modal-content" style="border-top:4px solid #e67e22;text-align:center;">
+        <div class="modal-header" style="background:#e67e22;color:#fff;"><h5 class="modal-title">&#127915; System Busy</h5></div>
+        <div class="modal-body" style="padding:2em;">
+          <p style="font-size:.9em;color:#888;">Our online banking servers are at capacity.</p>
+          <div style="font-size:3em;font-weight:700;color:#e67e22;margin:.5em 0;">
+            #<span id="queue-num">4,921</span>
+          </div>
+          <p>Your position in queue</p>
+          <div style="background:#eee;border-radius:4px;padding:.7em;font-size:.85em;">
+            &#x23F1; Estimated wait: <strong id="queue-wait">3 hours, 14 minutes</strong>
+          </div>
+          <p style="font-size:.75em;color:#aaa;margin-top:1em;">This page will refresh automatically when it's your turn. Please do not close this window.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary btn-sm" onclick="document.getElementById('queueOverlay').style.display='none';">Dismiss</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BIOS Shutdown Warning -->
+  <div id="biosShutdown" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#111;color:#0f0;font-family:'Courier New',monospace;z-index:99995;padding:2em;overflow:hidden;">
+    <p>American Megatrends BIOS v2.17.1249. Copyright (C) 2024 AMI</p>
+    <p>&nbsp;</p>
+    <p style="color:#ff0;">WARNING: THERMAL THRESHOLD EXCEEDED</p>
+    <p>CPU Temperature: 127°C — Emergency shutdown initiated</p>
+    <p>&nbsp;</p>
+    <p>Saving session state... <span id="bios-progress">&#9608;&#9608;&#9608;&#9608;</span></p>
+    <p>&nbsp;</p>
+    <p style="color:#f00;">System will shut down in <span id="bios-countdown">60</span> seconds</p>
+    <p style="color:#888;margin-top:2em;">South Federal Holdings Security Alert — Unauthorized access protection active</p>
+  </div>
+
+  <!-- Java Update Loop -->
+  <div id="javaOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:400px;">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">&#9749; Java Security Update Required</h5></div>
+        <div class="modal-body" style="text-align:center;padding:2em;">
+          <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Java_programming_language_logo.svg/64px-Java_programming_language_logo.svg.png" alt="Java" style="width:48px;margin-bottom:1em;" onerror="this.style.display='none'"/>
+          <p>Updating Java Security Libraries... Please do not close this window.</p>
+          <div style="background:#eee;border-radius:4px;height:20px;margin:1em 0;overflow:hidden;">
+            <div id="java-bar" style="height:100%;background:#f44336;width:0%;transition:width .3s;"></div>
+          </div>
+          <div id="java-pct" style="font-size:.9em;font-weight:600;">0%</div>
+          <p style="font-size:.75em;color:#888;margin-top:.5em;" id="java-stage">Initializing...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ISP Firewall Block -->
+  <div id="ispOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:480px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;">
+        <div class="modal-header" style="background:#c0392b;color:#fff;"><h5 class="modal-title">&#129531; ISP Firewall Block</h5></div>
+        <div class="modal-body">
+          <p><strong>ERROR CODE: ISP-FWALL-7734</strong></p>
+          <p>Your Internet Service Provider has <strong>blocked</strong> this transaction due to suspicious foreign activity originating from your IP address region.</p>
+          <div style="background:#ffebee;border:1px solid #ef9a9a;border-radius:4px;padding:.8em;font-family:monospace;font-size:.82em;">
+            Blocked IP: <span id="isp-ip">192.168.1.1</span><br/>
+            Region flag: SUSPICIOUS — International relay detected<br/>
+            ISP Policy: AUP Section 4.2 — Fraud Prevention
+          </div>
+          <p style="margin-top:1em;font-size:.85em;">Please call your Internet Service Provider or contact our fraud line at <strong>1-800-555-0199</strong> to whitelist your connection.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="document.getElementById('ispOverlay').style.display='none';">Dismiss</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Biometric / Retinal Scan -->
+  <div id="biometricOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:420px;">
+      <div class="modal-content" style="border-top:4px solid #7b1fa2;text-align:center;">
+        <div class="modal-header" style="background:#7b1fa2;color:#fff;"><h5 class="modal-title">&#128065; Biometric Verification Required</h5></div>
+        <div class="modal-body" style="padding:2em;">
+          <div style="font-size:4em;margin-bottom:.5em;">&#128065;</div>
+          <p><strong>Retinal Scan Authentication</strong></p>
+          <p style="font-size:.88em;">Our system is attempting to verify your identity via your device's webcam. Please look directly at your screen and do not blink.</p>
+          <div id="retinal-status" style="margin:1em 0;color:#888;font-size:.85em;">Initializing webcam... &#128247;</div>
+          <div style="background:#eee;border-radius:4px;height:8px;margin:.5em 0;overflow:hidden;">
+            <div id="retinal-bar" style="height:100%;background:#7b1fa2;width:0%;transition:width .5s;"></div>
+          </div>
+          <p id="retinal-msg" style="color:#c0392b;font-size:.82em;display:none;"><strong>Retinal scan failed.</strong> Please clean your screen and ensure adequate lighting. Attempt <span id="retinal-attempt">1</span> of 3.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('biometricOverlay').style.display='none';">Cancel</button>
+          <button class="btn btn-primary" id="retinal-retry">Retry Scan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checksum Error -->
+  <div id="checksumOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:460px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;">
+        <div class="modal-header" style="background:#c0392b;color:#fff;"><h5 class="modal-title">&#35;&#65039; Transaction Integrity Error</h5></div>
+        <div class="modal-body">
+          <p><strong>ERROR: CHECKSUM_MISMATCH_0x4E2F</strong></p>
+          <p>The transaction hash could not be validated against our secure ledger. This may indicate a man-in-the-middle attack or data corruption.</p>
+          <div style="background:#fff3f3;border:1px solid #e57373;border-radius:4px;padding:.8em;font-family:monospace;font-size:.78em;">
+            Expected Hash: a3f8c2...4b91e<br/>
+            Received Hash: <span style="color:#c0392b;">F4K35C4M...000000</span><br/>
+            Mismatch at byte: 0x0047
+          </div>
+          <div class="form-group" style="margin-top:1em;">
+            <label style="font-size:.85em;"><strong>Please re-enter your 16-digit verification code:</strong></label>
+            <input class="form-control" id="checksum-input" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19"/>
+          </div>
+          <small id="checksum-error" style="color:#c0392b;display:none;">Verification code invalid. Please try again.</small>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('checksumOverlay').style.display='none';">Cancel</button>
+          <button class="btn btn-danger" id="checksum-submit">Verify</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Survey Wall -->
+  <div id="surveyOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:540px;">
+      <div class="modal-content" style="border-top:4px solid #1976d2;">
+        <div class="modal-header" style="background:#1976d2;color:#fff;"><h5 class="modal-title">&#128203; Customer Satisfaction Survey</h5></div>
+        <div class="modal-body" style="max-height:60vh;overflow-y:auto;" id="survey-body">
+          <p><em>Please complete our mandatory customer satisfaction survey to re-enable transfer functionality. Question <span id="survey-q-num">1</span> of 50.</em></p>
+          <p style="font-weight:600;" id="survey-question">How satisfied are you with our online banking experience?</p>
+          <div id="survey-options">
+            <label><input type="radio" name="sq" value="1"/> Very Satisfied</label><br/>
+            <label><input type="radio" name="sq" value="2"/> Satisfied</label><br/>
+            <label><input type="radio" name="sq" value="3"/> Neutral</label><br/>
+            <label><input type="radio" name="sq" value="4"/> Dissatisfied</label><br/>
+            <label><input type="radio" name="sq" value="5"/> Very Dissatisfied</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <span style="font-size:.78em;color:#888;flex:1;">This survey is required by federal regulation 2 CFR Part 200.</span>
+          <button class="btn btn-primary" id="survey-next">Next &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms Scroll Wall -->
+  <div id="termsOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:560px;">
+      <div class="modal-content" style="border-top:4px solid #555;">
+        <div class="modal-header"><h5 class="modal-title">&#128220; Terms &amp; Conditions — Please Read</h5></div>
+        <div style="height:50vh;overflow-y:auto;padding:1em;font-size:.78em;color:#333;border-bottom:1px solid #ddd;line-height:1.7;" id="terms-scroll-box">
+          <strong>SOUTH FEDERAL HOLDINGS OF ILLINOIS — MASTER TERMS AND CONDITIONS OF ACCOUNT USE</strong><br/>Effective Date: January 1, 2024 &mdash; Supersedes All Prior Agreements<br/><br/>
+          ARTICLE I — GENERAL PROVISIONS. By accessing, viewing, navigating, or otherwise interacting with any portion of this banking portal, you ("the Account Holder," "You," "User," or "the Party of Dubious Intent") agree to be bound by these Terms and Conditions in their entirety, including all amendments, addenda, and supplemental schedules attached hereto and incorporated by reference.<br/><br/>
+          ARTICLE II — DEFINITIONS. "Bank" means South Federal Holdings of Illinois, a fictitious financial institution existing entirely for the purpose of wasting your time. "Account" means the deposit relationship established between the Bank and the Account Holder. "Transfer" means any attempted movement of funds, real or imaginary. "Scammer" means you, probably.<br/><br/>
+          ARTICLE III — WIRE TRANSFERS AND ELECTRONIC FUNDS. All wire transfers are subject to a mandatory 72-hour review period. All wire transfers to foreign or suspicious accounts are subject to an additional 14-day secondary review. All wire transfers are ultimately imaginary. The Bank reserves the right to question your life choices.<br/><br/>
+          ARTICLE IV — IDENTITY VERIFICATION. The Bank may, at its sole discretion, require identity verification at any time, for any reason, including but not limited to: (a) you existing; (b) you attempting a transaction; (c) the letters in your name spell something suspicious; (d) the Bank's fraud detection AI doesn't like your energy.<br/><br/>
+          ARTICLE V — LIMITATION OF LIABILITY. The Bank shall not be liable for any direct, indirect, special, incidental, consequential, or existential damages arising from your use of this portal, including loss of dignity, wasted time, emotional distress upon realizing you are in a honeypot, or the embarrassment of having tried to scam a fake bank for 45 minutes. Your sole remedy is to close this browser tab and reflect on your choices.<br/><br/>
+          ARTICLE VI — GOVERNING LAW. These Terms shall be governed by the laws of the State of Illinois, the spirit of karma, and whatever the judge thinks is funny. Any disputes shall be resolved through binding arbitration, to be held at a Chuck E. Cheese of the Bank's choosing.<br/><br/>
+          ARTICLE VII — MODIFICATIONS. The Bank reserves the right to modify these Terms at any time without notice. You will never be notified. You agreed to this by breathing.<br/><br/>
+          ARTICLE VIII — PRIVACY POLICY. We collect everything. Your keystrokes are very informative. Your typing speed suggests stress. We are notified of this document's hilarity in real-time.<br/><br/>
+          ARTICLE IX — ELECTRONIC COMMUNICATIONS. By clicking "I Accept" you consent to receive communications from the Bank via every channel including, but not limited to: email, SMS, interpretive dance, subpoena, and astral projection.<br/><br/>
+          ARTICLE X — SECURITY. You are responsible for maintaining the confidentiality of your username, password, security questions, W-9 forms, biometric data, retinal scans, voice recordings, childhood pet names, grandmother's maiden name, childhood best friend's middle name, and that embarrassing thing you did in middle school.<br/><br/>
+          ARTICLE XI — ANTI-FRAUD ACKNOWLEDGMENT. You acknowledge that (a) this is a honeypot; (b) you are aware now; (c) you are still reading; and (d) this is impressive commitment.<br/><br/>
+          <em>(This document continues for 89 more pages. Please scroll to the bottom to continue.)</em><br/><br/>
+          <div style="text-align:center;font-size:3em;margin:2em 0;">🙂</div>
+          <p style="text-align:center;font-weight:700;">You have reached the bottom.</p>
+          <p style="text-align:center;color:#888;">Congratulations on your perseverance. A support specialist has been notified of your dedication.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('termsOverlay').style.display='none';">Decline</button>
+          <button class="btn btn-success" id="terms-accept" disabled>I Accept (scroll to bottom first)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Recognition Required -->
+  <div id="voiceRecOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:420px;">
+      <div class="modal-content" style="border-top:4px solid #00897b;text-align:center;">
+        <div class="modal-header" style="background:#00897b;color:#fff;"><h5 class="modal-title">&#127908; Voice Recognition Required</h5></div>
+        <div class="modal-body" style="padding:2em;">
+          <div style="font-size:4em;margin-bottom:.5em;"><span id="voice-mic-icon">&#127908;</span></div>
+          <p>For enhanced security, please say the following phrase clearly into your microphone:</p>
+          <div style="background:#e0f2f1;border:1px solid #80cbc4;border-radius:6px;padding:1em;font-size:1.1em;font-weight:600;margin:1em 0;">"I am a real person and not a scammer"</div>
+          <div id="voice-status" style="color:#888;font-size:.85em;">Listening for voice input... &#127908;</div>
+          <small id="voice-error" style="color:#c0392b;display:none;">Voice not recognized. Please speak clearly and try again.</small>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('voiceRecOverlay').style.display='none';">Cancel</button>
+          <button class="btn btn-primary" id="voice-retry">Try Again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fake Database Re-index -->
+  <div id="dbReindexOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:440px;">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">&#128451; System Maintenance in Progress</h5></div>
+        <div class="modal-body" style="text-align:center;padding:2em;">
+          <p>Our database team is currently re-indexing your account records for performance optimization. Transfers are temporarily unavailable.</p>
+          <div style="background:#eee;border-radius:4px;height:16px;margin:1em 0;overflow:hidden;">
+            <div id="db-bar" style="height:100%;background:#1565c0;width:3%;"></div>
+          </div>
+          <div id="db-stage" style="font-size:.82em;color:#555;">Initializing re-index of 847,293 records...</div>
+          <div id="db-time" style="font-size:1.1em;font-weight:700;color:#c0392b;margin-top:.8em;">14 hours, 0 minutes remaining</div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="document.getElementById('dbReindexOverlay').style.display='none';">Dismiss</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Browser Incompatibility -->
+  <div id="browserIncompat" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99993;font-family:Arial,sans-serif;padding:2em;text-align:center;">
+    <div style="max-width:500px;margin:3em auto;">
+      <div style="font-size:5em;">🦕</div>
+      <h2 style="color:#c0392b;">Browser Not Supported</h2>
+      <p>South Federal Holdings of Illinois requires <strong>Internet Explorer 11</strong> or higher for all financial transactions.</p>
+      <p style="font-size:.88em;color:#666;">Your current browser (detected: Not Internet Explorer) does not meet our minimum security requirements as per Federal Reserve Circular 2002-7.</p>
+      <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:1em;margin:1.5em 0;font-size:.88em;">
+        <strong>&#128229; Download Internet Explorer 11</strong><br/>
+        <a href="#" onclick="return false;" style="color:#1a73e8;">microsoft.com/en-us/download/internet-explorer.aspx</a><br/>
+        <small style="color:#888;">(Note: IE11 support ended June 15, 2022. This page is a joke.)</small>
+      </div>
+      <button onclick="document.getElementById('browserIncompat').style.display='none';" style="background:#c0392b;color:#fff;border:none;padding:.7em 1.4em;border-radius:4px;cursor:pointer;">Continue anyway (unsupported)</button>
+    </div>
+  </div>
+
+  <!-- Govt Audit Freeze -->
+  <div id="govAuditOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:500px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;">
+        <div class="modal-header" style="background:#1a3a6b;color:#fff;"><h5 class="modal-title">&#127981; IRS Audit — Account Freeze Notice</h5></div>
+        <div class="modal-body">
+          <p><strong>NOTICE OF ADMINISTRATIVE FREEZE</strong></p>
+          <p>Pursuant to <strong>26 U.S.C. § 6321</strong> (Tax Lien) and coordination with the Financial Crimes Enforcement Network (FinCEN), this account has been placed under a <strong>temporary administrative freeze</strong> pending completion of an IRS compliance audit.</p>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:4px;padding:.8em;font-size:.85em;">
+            Freeze duration: <strong>72 hours</strong> (renewable)<br/>
+            Case ID: IRS-FCE-2024-<span id="audit-case">—</span><br/>
+            All transactions: <strong style="color:#c0392b;">SUSPENDED</strong>
+          </div>
+          <p style="font-size:.82em;margin-top:1em;">To expedite release, contact your IRS Revenue Agent at <strong>1-800-555-0199</strong>. Do not attempt to transfer funds during a freeze period.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="document.getElementById('govAuditOverlay').style.display='none';">Acknowledge</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rival Scammer Notification -->
+  <div id="rivalScammerOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:440px;">
+      <div class="modal-content" style="border-top:4px solid #ff9800;">
+        <div class="modal-header" style="background:#ff9800;color:#fff;"><h5 class="modal-title">&#128222; Account Already in Use</h5></div>
+        <div class="modal-body" style="text-align:center;padding:2em;">
+          <div style="font-size:3em;margin-bottom:.5em;">&#128222;</div>
+          <p><strong>Another support representative is currently assisting this account.</strong></p>
+          <p style="font-size:.88em;color:#666;">A South Federal Holdings specialist (Agent ID: SCM-4471) has been on a call with this account holder since 9:14 AM and is currently processing a wire transfer request.</p>
+          <p style="font-size:.85em;color:#c0392b;font-weight:600;">Please disconnect and try again later.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-warning" onclick="document.getElementById('rivalScammerOverlay').style.display='none';">Dismiss</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IRS Lien Notice -->
+  <div id="irsLienOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:500px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;">
+        <div class="modal-header" style="background:#1a3a6b;color:#fff;"><h5 class="modal-title">&#128220; IRS Tax Lien — Account Notice</h5></div>
+        <div class="modal-body">
+          <p><strong>NOTICE OF FEDERAL TAX LIEN</strong></p>
+          <p>The Internal Revenue Service has placed a <strong>federal tax lien</strong> against this account in the amount of <strong style="color:#c0392b;font-size:1.1em;">$47,293.14</strong> for unpaid federal income taxes (Tax Years 2019–2022).</p>
+          <div style="background:#ffebee;border:1px solid #ef9a9a;border-radius:4px;padding:.8em;font-size:.85em;">
+            Lien File Number: IRS-LIEN-2024-<span id="lien-case">—</span><br/>
+            Recording Date: April 2, 2024<br/>
+            Status: <strong style="color:#c0392b;">ACTIVE — All transfers blocked</strong>
+          </div>
+          <p style="font-size:.82em;margin-top:1em;">To dispute this lien, contact the IRS at 1-800-555-0199 or visit your nearest IRS office. A $150 filing fee applies to all disputes.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="document.getElementById('irsLienOverlay').style.display='none';">Acknowledge</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Redemption Popup / Pierog Speech -->
+  <div id="redemptionOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:460px;">
+      <div class="modal-content" style="border-top:4px solid #4caf50;text-align:center;">
+        <div class="modal-body" style="padding:2.5em 2em;">
+          <div style="font-size:4em;margin-bottom:.5em;">&#128149;</div>
+          <h4>Hey. We need to talk.</h4>
+          <p style="color:#555;font-size:.9em;">This website is a honeypot. You've been on it long enough to know something was off. Nobody's bank website asks for your SSN three times.</p>
+          <p style="color:#555;font-size:.88em;">Scamming real people causes real harm. Elderly victims lose their life savings. People lose their homes. It's not a game.</p>
+          <p style="color:#555;font-size:.88em;">You still have a chance to walk away from this. Just close the tab. No charges have been filed. No FBI agent is actually coming (that page was fake too).</p>
+          <p style="font-size:.85em;color:#888;margin-top:1em;">This message brought to you by someone who believes people can change.</p>
+          <button class="btn btn-success" onclick="document.getElementById('redemptionOverlay').style.display='none';" style="margin-top:1em;">I understand</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Million -->
+  <div id="greedyOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:440px;">
+      <div class="modal-content" style="border-top:4px solid #ffd700;text-align:center;">
+        <div class="modal-body" style="padding:2em;">
+          <div style="font-size:4em;margin-bottom:.5em;">&#127873;</div>
+          <h4 style="color:#ffa000;">Unclaimed Balance Found!</h4>
+          <p>Our system has discovered an <strong>unclaimed balance</strong> of <strong style="font-size:1.4em;color:#2e7d32;">$1,000,000.00</strong> associated with your account from a dormant 1994 trust.</p>
+          <div style="background:#eee;border-radius:4px;height:12px;margin:1em 0;overflow:hidden;">
+            <div id="greedy-bar" style="height:100%;background:#ffd700;width:0%;transition:width .5s;"></div>
+          </div>
+          <div id="greedy-status" style="font-size:.85em;color:#888;">Processing unclaimed funds transfer...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Maintenance Mode -->
+  <div id="maintenanceOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:99990;color:#fff;font-family:Arial,sans-serif;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;">
+    <div style="font-size:4em;margin-bottom:.5em;">&#128296;</div>
+    <h2>Scheduled Maintenance</h2>
+    <p style="color:#aaa;max-width:500px;">We are performing scheduled database maintenance. Online banking transfers will resume at <strong style="color:#fff;">2:00 AM Central Time</strong>.</p>
+    <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:1em 2em;margin:1em 0;">
+      <div style="font-size:.85em;color:#aaa;">Estimated completion:</div>
+      <div id="maint-timer" style="font-size:2em;font-weight:700;font-family:monospace;">14:37:22</div>
+    </div>
+    <p style="color:#888;font-size:.85em;">We apologize for any inconvenience. Deposits continue to be available. Please try again later.</p>
+    <button onclick="document.getElementById('maintenanceOverlay').style.display='none';" style="margin-top:1em;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:.6em 1.4em;border-radius:4px;cursor:pointer;">Dismiss</button>
+  </div>
+
+  <!-- Scammer Risk Score Widget (injected dynamically) -->
+
+  <!-- Grandma Notified Popup -->
+  <div id="grandmaOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:400px;">
+      <div class="modal-content" style="border-top:4px solid #7b1fa2;text-align:center;">
+        <div class="modal-body" style="padding:2em;">
+          <div style="font-size:4em;margin-bottom:.5em;">&#128145;</div>
+          <h4>Your Grandmother Has Been Notified</h4>
+          <p style="color:#666;font-size:.88em;">We have automatically notified your grandmother of your current online activities via our <em>Next of Kin Fraud Alert</em> program.</p>
+          <p style="color:#666;font-size:.85em;">She said, and we quote: <em>"I'm very disappointed, sweetheart."</em></p>
+          <p style="font-size:.75em;color:#aaa;margin-top:1em;">Reference: GMN-2024-<span id="grandma-ref">0000</span></p>
+          <button class="btn btn-primary" onclick="document.getElementById('grandmaOverlay').style.display='none';" style="margin-top:1em;">Ok</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERPOL Banner (injected dynamically) -->
+
+  <!-- Account Deleted Notice -->
+  <div id="accountDeletedOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:440px;">
+      <div class="modal-content" style="border-top:4px solid #c0392b;text-align:center;">
+        <div class="modal-body" style="padding:2em;">
+          <div style="font-size:4em;margin-bottom:.5em;">&#128465;</div>
+          <h4 style="color:#c0392b;">Account Scheduled for Deletion</h4>
+          <p style="color:#666;font-size:.88em;">This account has been flagged by our fraud detection system and is scheduled for <strong>permanent deletion</strong> in:</p>
+          <div style="font-size:2.5em;font-weight:700;color:#c0392b;font-family:monospace;margin:.5em 0;" id="delete-countdown">23:59:59</div>
+          <p style="font-size:.82em;color:#888;">To appeal this decision, call 1-800-555-0199 and provide reference: DEL-<span id="delete-ref">0000</span></p>
+          <button class="btn btn-danger" onclick="document.getElementById('accountDeletedOverlay').style.display='none';">Acknowledge</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paperwork Required -->
+  <div id="paperworkOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:500px;">
+      <div class="modal-content" style="border-top:4px solid #555;">
+        <div class="modal-header"><h5 class="modal-title">&#128194; Additional Documentation Required</h5></div>
+        <div class="modal-body">
+          <p>Before processing this transfer, we require the following documentation (<strong>PDF format only</strong>, max 2MB each):</p>
+          <ul style="font-size:.88em;">
+            <li>&#9744; Government-issued photo ID (front &amp; back)</li>
+            <li>&#9744; Recent utility bill (within 60 days)</li>
+            <li>&#9744; Signed and notarized wire authorization affidavit</li>
+            <li>&#9744; Proof of funds source (bank statement, 90 days)</li>
+            <li>&#9744; Completed IRS Form 4506-C (transcript request)</li>
+          </ul>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:4px;padding:.7em;font-size:.82em;margin-top:1em;">
+            &#9888; Processing time: <strong>5–7 business days</strong> after all documents received.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('paperworkOverlay').style.display='none';">Cancel</button>
+          <button class="btn btn-primary" onclick="alert('Document upload portal is currently unavailable. Please call 1-800-555-0199.');">Upload Documents</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Micro-Deposits -->
+  <div id="microDepositsOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:460px;">
+      <div class="modal-content" style="border-top:4px solid #1976d2;">
+        <div class="modal-header" style="background:#1976d2;color:#fff;"><h5 class="modal-title">&#128176; External Account Verification</h5></div>
+        <div class="modal-body">
+          <p>To verify your external account, we have sent <strong>two small micro-deposits</strong> (typically between $0.01 and $0.99 each) to the account ending in the routing number you provided.</p>
+          <p style="font-size:.85em;color:#666;">These deposits will appear in your external account within <strong>3–5 business days</strong>. Once you see them, return here and enter the exact amounts to complete verification.</p>
+          <div style="background:#e3f2fd;border:1px solid #90caf9;border-radius:4px;padding:.8em;font-size:.85em;">
+            Verification Code: MDEPOSIT-<span id="micro-ref">—</span><br/>
+            Status: <strong>Deposits sent — awaiting confirmation</strong>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-primary" onclick="document.getElementById('microDepositsOverlay').style.display='none';">I understand, I will check back in 3–5 days</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compliance Hold -->
+  <div id="complianceOverlay" class="sfb-overlay" style="display:none;">
+    <div class="modal-dialog" style="margin:auto;max-width:500px;">
+      <div class="modal-content" style="border-top:4px solid #1a3a6b;">
+        <div class="modal-header" style="background:#1a3a6b;color:#fff;"><h5 class="modal-title">&#9878; BSA Compliance Hold</h5></div>
+        <div class="modal-body">
+          <p><strong>BANK SECRECY ACT — COMPLIANCE REVIEW</strong></p>
+          <p>Your transfer has been automatically flagged for review under the <strong>Bank Secrecy Act (31 U.S.C. § 5318)</strong> and FinCEN regulations. A Currency Transaction Report (CTR) has been filed.</p>
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:4px;padding:.8em;font-size:.85em;">
+            Hold type: BSA/AML Review<br/>
+            Duration: <strong>10–14 business days</strong><br/>
+            CTR Filed: Yes — FinCEN Reference <span id="bsa-ref">—</span>
+          </div>
+          <p style="font-size:.82em;margin-top:1em;">You are not required to take any action at this time. Federal law prohibits us from telling you more. Have a great day.</p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="document.getElementById('complianceOverlay').style.display='none';">Acknowledge</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Click Counter Overlay (injected as banner) -->
+  <!-- Invisible Fields handled by CSS -->
+  <!-- Session Expire Banner (injected dynamically) -->
+  <!-- Connection Dropping Banner (injected dynamically) -->
+  <!-- Fake FBI IP Banner (injected dynamically) -->
+
+  <!-- Inactivity popup -->
+  <div id="inactivityPopup">
+    <div class="iseriouslydontcare">
+      <h2>For Your Safety</h2>
+      <p>You have been safely logged out due to inactivity.</p>
+      <p>To return to the login page <a href="/">click here</a>.</p>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="/script.js"></script>
+  </body>
+</html>

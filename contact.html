@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/themes/basic/template.css">
+    <title>Contact Us | South Federal</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+      #contact-wrap { max-width: 820px; margin: 2em auto; }
+      .contact-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 2em; }
+      .contact-card h4 { border-bottom: 3px solid var(--primary-bg-color); padding-bottom: .5em; margin-bottom: 1.5em; }
+      .info-box { background: #f0f7e6; border-left: 4px solid var(--primary-bg-color); border-radius: 0 8px 8px 0; padding: 1.2em 1.5em; margin-bottom: 1.5em; }
+      .info-box h5 { margin-bottom: .8em; }
+      .info-row { display: flex; align-items: center; margin-bottom: .6em; font-size: .95em; }
+      .info-row .oi { font-size: 1.1em; margin-right: .7em; color: var(--secondary-bg-color); }
+      #success-msg { display: none; text-align: center; padding: 2.5em 1em; }
+      #success-msg .check { font-size: 3.5em; color: var(--primary-bg-color); }
+      .form-label { font-weight: 600; font-size: .9em; }
+      textarea#message { min-height: 130px; }
+    </style>
+  </head>
+  <body>
+    <div class="preheader"><div class="container"><nav><ul><li>Products</li><li>Services</li><li>Help</li></ul></nav></div></div>
+    <header>
+      <div class="container"><div class="row"><div class="col-md-12">
+        <h2 style="margin-top:8px;"><span id="logo" class="oi" data-glyph="flag"></span>South Federal Holdings of Illinois</h2>
+        <div class="header-menu">
+          <nav><ul class="nav mx-auto">
+            <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+            <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          </ul></nav>
+        </div>
+      </div></div></div>
+    </header>
+    <div class="menu">
+      <div class="container"><div class="row"><div class="col-md-12">
+        <nav><ul class="nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="/account">Your Accounts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transfer">Pay &amp; Transfer</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/contact">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        </ul></nav>
+      </div></div></div>
+    </div>
+
+    <div id="contact-wrap">
+      <div class="row">
+
+        <!-- Left: Contact info -->
+        <div class="col-md-4" style="margin-bottom:1.5em;">
+          <div class="contact-card" style="height:100%;">
+            <h4>Get In Touch</h4>
+
+            <div class="info-box">
+              <h5>Customer Support</h5>
+              <div class="info-row"><span class="oi" data-glyph="phone"></span><strong>1-800-555-0199</strong></div>
+              <div class="info-row" style="font-size:.82em;color:#666;margin-left:1.8em;">Available 24/7</div>
+            </div>
+
+            <div class="info-box">
+              <h5>Report Fraud</h5>
+              <div class="info-row"><span class="oi" data-glyph="ban"></span><strong>1-800-555-0911</strong></div>
+              <div class="info-row" style="font-size:.82em;color:#666;margin-left:1.8em;">24/7 Fraud Hotline</div>
+            </div>
+
+            <div class="info-box">
+              <h5>Mailing Address</h5>
+              <div style="font-size:.9em;line-height:1.7;">
+                South Federal Holdings of Illinois<br>
+                P.O. Box 4821<br>
+                Chicago, IL 60601
+              </div>
+            </div>
+
+            <div class="info-box" style="margin-bottom:0;">
+              <h5>Business Hours</h5>
+              <div style="font-size:.88em;line-height:1.8;">
+                <strong>Online Banking:</strong> 24/7<br>
+                <strong>Phone Support:</strong> 24/7<br>
+                <strong>Live Chat:</strong> Mon–Fri 8am–8pm CT
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Contact form -->
+        <div class="col-md-8">
+          <div class="contact-card">
+            <h4>Send Us a Message</h4>
+
+            <div id="form-area">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="f-name" placeholder="John" />
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="form-label">Last Name</label>
+                  <input type="text" class="form-control" id="l-name" placeholder="Doe" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="you@example.com" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Phone Number <span style="font-weight:400;color:#999;">(optional)</span></label>
+                <input type="tel" class="form-control" id="phone" placeholder="(555) 000-0000" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select class="form-control" id="subject">
+                  <option value="" disabled selected>Select a topic...</option>
+                  <option>Account Access Issue</option>
+                  <option>Transaction Dispute</option>
+                  <option>Transfer Question</option>
+                  <option>Lost or Stolen Card</option>
+                  <option>Account Opening</option>
+                  <option>Fraud or Suspicious Activity</option>
+                  <option>Technical Support</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" id="message" placeholder="Please describe how we can help you..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="copy-me">
+                  <label class="form-check-label" for="copy-me" style="font-size:.88em;">
+                    Send me a copy of this message
+                  </label>
+                </div>
+              </div>
+
+              <div id="form-err" style="color:#c0392b;font-size:.85em;display:none;margin-bottom:.8em;"></div>
+
+              <button class="btn btn-success btn-block" id="send-btn">Send Message</button>
+            </div>
+
+            <!-- Success state -->
+            <div id="success-msg">
+              <div class="check">&#10003;</div>
+              <h4 style="margin-top:.5em;">Message Sent!</h4>
+              <p>Thank you for reaching out. A South Federal representative will respond within <strong>1 business day</strong>.</p>
+              <p>Reference number: <strong id="ref-num"></strong></p>
+              <a href="/account" class="btn btn-success" style="margin-top:1em;">Back to Accounts</a>
+              <button class="btn btn-outline-secondary" id="new-msg-btn" style="margin-top:1em;margin-left:.5em;">Send Another Message</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="content footer" style="margin-top:3em;">
+      <div class="container">
+        <p>Member FDIC: No.</p>
+        <p>&copy; Copyright 2024 GGNOREE LLP, LLC, UDP.</p>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script>
+      $('#send-btn').on('click', function() {
+        var name    = $('#f-name').val().trim();
+        var lname   = $('#l-name').val().trim();
+        var email   = $('#email').val().trim();
+        var subject = $('#subject').val();
+        var msg     = $('#message').val().trim();
+
+        $('#form-err').hide();
+
+        if (!name || !lname) { $('#form-err').text('Please enter your first and last name.').show(); return; }
+        if (!email || !email.includes('@')) { $('#form-err').text('Please enter a valid email address.').show(); return; }
+        if (!subject) { $('#form-err').text('Please select a subject.').show(); return; }
+        if (!msg) { $('#form-err').text('Please enter a message.').show(); return; }
+
+        // Generate reference number
+        var ref = 'SF-' + new Date().getFullYear() + '-' + Math.floor(100000 + Math.random() * 900000);
+        $('#ref-num').text(ref);
+        $('#form-area').hide();
+        $('#success-msg').show();
+      });
+
+      $('#new-msg-btn').on('click', function() {
+        $('#f-name, #l-name, #email, #phone, #message').val('');
+        $('#subject').val('');
+        $('#success-msg').hide();
+        $('#form-area').show();
+      });
+    </script>
+  </body>
+</html>

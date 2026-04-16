@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>FBI — Cyber Division Warning</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #111; color: #eee;
+      font-family: 'Times New Roman', serif;
+      min-height: 100vh;
+    }
+
+    /* Top gov bar */
+    #gov-bar {
+      background: #1a3a6b; color: #fff; text-align: center;
+      padding: .35em; font-size: .78em; letter-spacing: .5px;
+      border-bottom: 3px solid #c8a951;
+    }
+
+    /* Main warning box */
+    #wrapper {
+      max-width: 860px; margin: 2em auto; padding: 0 1em;
+    }
+
+    #seal-header {
+      display: flex; align-items: center; gap: 1.5em;
+      background: #1a3a6b; color: #fff; padding: 1.2em 1.5em;
+      border: 3px solid #c8a951; border-radius: 4px 4px 0 0;
+    }
+
+    .seal {
+      font-size: 5em; flex-shrink: 0;
+    }
+
+    .seal-text h1 { font-size: 1.3em; letter-spacing: 1px; font-weight: 700; color: #c8a951; }
+    .seal-text h2 { font-size: 1em; font-weight: 400; color: #ccc; margin-top: .2em; }
+    .seal-text h3 { font-size: .85em; font-weight: 400; color: #aaa; margin-top: .15em; }
+
+    #warning-body {
+      background: #fff; color: #111;
+      border: 3px solid #c8a951; border-top: none;
+      padding: 1.8em 2em;
+      border-radius: 0 0 4px 4px;
+    }
+
+    #warning-body .case-ref {
+      background: #1a3a6b; color: #fff;
+      padding: .5em 1em; font-size: .82em;
+      display: flex; justify-content: space-between;
+      border-radius: 3px; margin-bottom: 1.2em;
+    }
+
+    #warning-body .section-head {
+      font-weight: 700; font-size: 1.05em;
+      text-transform: uppercase; letter-spacing: 1px;
+      border-bottom: 2px solid #c8a951; padding-bottom: .3em; margin-bottom: .8em;
+    }
+
+    #warning-body p { line-height: 1.7; margin-bottom: 1em; font-size: .92em; }
+
+    .violation-table {
+      width: 100%; border-collapse: collapse; margin: 1em 0;
+      font-size: .85em;
+    }
+    .violation-table th {
+      background: #1a3a6b; color: #fff; padding: .5em .8em;
+      text-align: left; font-weight: 600;
+    }
+    .violation-table td {
+      padding: .5em .8em; border-bottom: 1px solid #ddd;
+    }
+    .violation-table tr:nth-child(even) td { background: #f5f5f5; }
+    .violation-table .status-detected {
+      color: #c0392b; font-weight: 700;
+    }
+
+    .fine-box {
+      background: #fff3cd; border: 2px solid #ffc107; border-radius: 4px;
+      padding: 1em 1.4em; margin: 1.2em 0;
+    }
+    .fine-box .fine-amount { font-size: 2em; font-weight: 700; color: #c0392b; }
+
+    .contact-box {
+      background: #1a3a6b; color: #fff; border-radius: 4px;
+      padding: 1em 1.4em; margin-top: 1.4em; font-size: .88em;
+    }
+    .contact-box strong { color: #c8a951; }
+
+    #countdown-box {
+      background: #c0392b; color: #fff; text-align: center;
+      padding: 1em; border-radius: 4px; margin-top: 1.4em;
+    }
+    #countdown-box .cd-label { font-size: .85em; opacity:.8; margin-bottom:.3em; }
+    #countdown-box .cd-timer { font-size: 2.4em; font-weight: 700; font-family: monospace; }
+    #countdown-box .cd-sub { font-size: .78em; opacity:.75; margin-top:.3em; }
+
+    #ip-box {
+      background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px;
+      padding: .7em 1.2em; font-size: .82em; color: #555;
+      margin-bottom: 1em; font-family: monospace;
+    }
+
+    /* Fake progress overlay — appears after clicking anything suspicious */
+    #scan-overlay {
+      display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,.85); z-index:9999;
+      align-items:center; justify-content:center; flex-direction:column;
+      color:#0f0; font-family: monospace; text-align:center;
+    }
+    #scan-overlay.active { display: flex; }
+    #scan-log { font-size:.8em; color:#0f0; max-width:600px; text-align:left; margin-top:1em; line-height:1.8; }
+
+    footer {
+      text-align: center; font-size: .72em; color: #888;
+      padding: 1.5em; margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="gov-bar">
+  AN OFFICIAL WEBSITE OF THE UNITED STATES GOVERNMENT &nbsp;&bull;&nbsp;
+  <strong>.GOV</strong> WEBSITES ARE AUTHENTICATED &nbsp;&bull;&nbsp;
+  This is not a real government website. You are being trolled.
+</div>
+
+<div id="wrapper">
+  <div id="seal-header">
+    <div class="seal">&#127820;</div>
+    <div class="seal-text">
+      <h1>&#9888; FEDERAL BUREAU OF INVESTIGATION</h1>
+      <h2>Cyber Division &mdash; Financial Crimes Unit &mdash; Division IV</h2>
+      <h3>U.S. Department of Justice &bull; Washington, D.C. 20535</h3>
+    </div>
+  </div>
+
+  <div id="warning-body">
+
+    <div class="case-ref">
+      <span>Case File: <strong id="case-num">CYB-2024-1138-FCU</strong></span>
+      <span>Classification: <strong>UNCLASSIFIED // FOR OFFICIAL TROLL ONLY</strong></span>
+    </div>
+
+    <div id="ip-box">
+      Session IP: <span id="ip-display">Resolving...</span> &nbsp;&bull;&nbsp;
+      Browser fingerprint: <span id="fp-display">Calculating...</span> &nbsp;&bull;&nbsp;
+      Moral integrity score: <strong style="color:#c0392b;">0 / 100</strong>
+    </div>
+
+    <div class="section-head">&#9888; Warning — Your Activity Has Been Flagged</div>
+
+    <p>
+      The Federal Bureau of Investigation Cyber Division has detected and recorded <strong>unauthorized
+      and fraudulent</strong> access attempts to a monitored financial institution honeypot operated in
+      cooperation with the Internet Crime Complaint Center (IC3) and the Financial Crimes Enforcement
+      Network (FinCEN).
+    </p>
+
+    <p>
+      Your session has been <strong>fully logged</strong>, including all keystrokes, form submissions,
+      and account access attempts. The following violations have been automatically detected and
+      filed under <strong>18 U.S.C. § 1030 (Computer Fraud and Abuse Act)</strong> and
+      <strong>18 U.S.C. § 1344 (Bank Fraud)</strong>:
+    </p>
+
+    <table class="violation-table">
+      <thead>
+        <tr><th>Violation</th><th>Statute</th><th>Max Penalty</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Unauthorized access to computer system</td>
+          <td>18 U.S.C. § 1030(a)(2)</td>
+          <td>5 years / $250,000</td>
+          <td class="status-detected">DETECTED</td>
+        </tr>
+        <tr>
+          <td>Attempted wire fraud</td>
+          <td>18 U.S.C. § 1343</td>
+          <td>20 years / $500,000</td>
+          <td class="status-detected">DETECTED</td>
+        </tr>
+        <tr>
+          <td>Bank fraud (attempted)</td>
+          <td>18 U.S.C. § 1344</td>
+          <td>30 years / $1,000,000</td>
+          <td class="status-detected">DETECTED</td>
+        </tr>
+        <tr>
+          <td>Wasting a perfectly good Thursday</td>
+          <td>Common Sense Act § 1</td>
+          <td>Infinite embarrassment</td>
+          <td class="status-detected">CONFIRMED</td>
+        </tr>
+        <tr>
+          <td>Annoying a homelab operator</td>
+          <td>Unwritten Law § lol</td>
+          <td>Getting roasted online</td>
+          <td class="status-detected">CONFIRMED</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="fine-box">
+      <div>Total Assessed Civil Penalty (Preliminary):</div>
+      <div class="fine-amount">$0.00</div>
+      <div style="font-size:.82em;color:#666;margin-top:.3em;">
+        Because this is a fake page and no actual charges can be filed here.
+        However, your activity <em>has</em> been logged and may be forwarded to
+        the IC3 at ic3.gov. You should probably stop.
+      </div>
+    </div>
+
+    <div class="section-head">What Happens Next</div>
+
+    <p>
+      All session data, keystroke logs, IP addresses, and submitted form data collected during your
+      interaction with the South Federal Holdings of Illinois honeypot system have been preserved
+      as evidence and <strong>transmitted to the FBI Cyber Division Evidence Repository</strong>.
+    </p>
+
+    <p style="color:#c0392b;font-weight:600;">
+      &#128514; Nah, we're just messing with you. This is a scam baiting honeypot.
+      You got got. Have a great day.
+    </p>
+
+    <div id="countdown-box">
+      <div class="cd-label">Time you have spent on this fake bank website:</div>
+      <div class="cd-timer" id="visit-timer">00:00:00</div>
+      <div class="cd-sub">That's time you'll never get back. Reflect on your choices.</div>
+    </div>
+
+    <div class="contact-box">
+      <strong>If you are a real person who stumbled here by accident:</strong><br/>
+      This is a scam-baiting honeypot operated for cybersecurity research and entertainment.
+      No real financial data exists here. To report actual cybercrime, visit
+      <strong>ic3.gov</strong> or call the FBI at <strong>1-800-CALL-FBI</strong>.
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Federal Bureau of Investigation &bull; Cyber Division &bull; Washington D.C., 20535<br/>
+  This is a parody / scam-baiting page. It is not affiliated with the FBI or any government agency.<br/>
+  &copy; 2024 South Federal Holdings of Illinois Honeypot System
+</footer>
+
+<!-- Fake scan overlay — triggers on load for drama -->
+<div id="scan-overlay">
+  <div style="font-size:1.3em;color:#0f0;margin-bottom:.5em;">&#9608; FBI CYBER DIVISION &#9608;</div>
+  <div style="font-size:.9em;color:#0a0;">Scanning session data...</div>
+  <div id="scan-log"></div>
+</div>
+
+<script>
+  // Generate fake case number
+  document.getElementById('case-num').textContent =
+    'CYB-2024-' + Math.floor(1000 + Math.random() * 8999) + '-FCU';
+
+  // Fake IP / fingerprint display
+  var fakeOctets = [
+    Math.floor(Math.random()*254+1),
+    Math.floor(Math.random()*254+1),
+    Math.floor(Math.random()*254+1),
+    Math.floor(Math.random()*254+1)
+  ];
+  document.getElementById('ip-display').textContent = fakeOctets.join('.');
+  document.getElementById('fp-display').textContent = Math.random().toString(36).substr(2,12).toUpperCase();
+
+  // Visit timer (counting up from when they land)
+  var startTime = Date.now();
+  setInterval(function() {
+    var elapsed = Math.floor((Date.now() - startTime) / 1000);
+    var h = Math.floor(elapsed / 3600);
+    var m = Math.floor((elapsed % 3600) / 60);
+    var s = elapsed % 60;
+    document.getElementById('visit-timer').textContent =
+      String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }, 1000);
+
+  // Dramatic scan overlay on load
+  var scanLines = [
+    '> Connecting to FBI Evidence Repository...',
+    '> Session ID resolved: ' + Math.random().toString(36).substr(2,16).toUpperCase(),
+    '> Retrieving keystroke log... 847 events found',
+    '> Retrieving form submissions... 12 found',
+    '> Cross-referencing with fraud database...',
+    '> Match found: HIGH CONFIDENCE (94.7%)',
+    '> Packaging evidence bundle...',
+    '> Transmitting to ic3.gov...',
+    '> Notifying your grandma...',
+    '> Complete. You have been emotionally judged.',
+  ];
+
+  var $overlay = document.getElementById('scan-overlay');
+  var $log = document.getElementById('scan-log');
+  $overlay.classList.add('active');
+
+  var i = 0;
+  var scanInterval = setInterval(function() {
+    if (i < scanLines.length) {
+      var line = document.createElement('div');
+      line.textContent = scanLines[i];
+      $log.appendChild(line);
+      i++;
+    } else {
+      clearInterval(scanInterval);
+      setTimeout(function() { $overlay.classList.remove('active'); }, 1200);
+    }
+  }, 600);
+</script>
+</body>
+</html>
